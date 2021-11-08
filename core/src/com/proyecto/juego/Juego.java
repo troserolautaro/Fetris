@@ -37,6 +37,7 @@ public class Juego implements JuegoEventListener{
 		Mundo.batch.setProjectionMatrix(cam.combined);
 		cam.update();
 		updatePieza();
+		verifLineaCompl();
 
 	}
 	public void nuevaPieza() {
@@ -63,6 +64,12 @@ public class Juego implements JuegoEventListener{
 		tiempoMov+=Gdx.graphics.getDeltaTime();
 		if(tiempoMov>intervaloCaida) {
 			bajarPieza();
+//			for (int i = 0; i < p.getTetromino().length; i++) {
+//				System.out.println("Cuadrado " + i);
+//				System.out.println("X: " + p.getTetromino()[i].getXGrilla());
+//				System.out.println("Y: " + p.getTetromino()[i].getYGrilla());
+//			}
+			
 			tiempoMov=0;
 			}
 			
@@ -79,8 +86,8 @@ public class Juego implements JuegoEventListener{
 		if(posYAux <= mapa.getSpr().getY() ) {
 				moverse=false;
 		}else {
-				if(mapa.getSprites().size()>0){
-					if(colisionSprite(c,c.getSpr().getX(),posYAux)) { //Si devuelve falso no colisiona, por ende puede moverse
+				if(mapa.getCuadrados().size()>0){
+					if(colisionCuadrado(c,c.getSpr().getX(),posYAux)) { //Si devuelve falso no colisiona, por ende puede moverse
 						moverse=false;
 					}
 				
@@ -92,7 +99,8 @@ public class Juego implements JuegoEventListener{
 		
 		if(!moverse) {//Si colisiona y no puede moverse en el eje vertical, guardar el sprite y generar una nueva pieza
 			for (int j = 0; j < p.getTetromino().length; j++) {
-				mapa.getSprites().add(p.getTetromino()[j].getSpr());
+				mapa.getCuadrados().add(p.getTetromino()[j]);
+				mapa.updateGrilla(p.getTetromino()[j]);
 			}
 			nueva=true;
 		}
@@ -113,18 +121,19 @@ public boolean verifMov(Cuadrado[] t, float dir) { //Verificar colisiones en X d
 		if(posXAux >=  mapa.getSpr().getX()+ mapa.getSpr().getWidth()- c.getTamaño()) {
 			mov=false;
 		}else {
-			if(mapa.getSprites().size()>0) {
-				if(colisionSprite(c,posXAux,c.getSpr().getY())){
+			if(mapa.getCuadrados().size()>0) {
+				if(colisionCuadrado(c,posXAux,c.getSpr().getY())){
 					mov=false;
 				}
 			}
 		}
 	}else {
+		
 		if(posXAux < mapa.getSpr().getX() + c.getTamaño()) {
 			mov=false;
 		}else {
-			if(mapa.getSprites().size()>0) {
-				if(colisionSprite(c,posXAux,c.getSpr().getY())){
+			if(mapa.getCuadrados().size()>0) {
+				if(colisionCuadrado(c,posXAux,c.getSpr().getY())){
 					mov=false;
 				}	
 			}
@@ -143,7 +152,9 @@ public void moverPieza(float dir) {
 		for (int i = 0; i <	t.length; i++) {
 			float pos=t[i].getSpr().getX()+dir*t[i].getTamaño();
 			t[i].getSpr().setX(pos);
+			System.out.println(pos);
 		}
+		System.out.println("-------------------");
 	}
 //	for (int i = 0; i < t.length; i++) {
 //		t[i].setX(verifMov(t[i],dir));
@@ -151,15 +162,15 @@ public void moverPieza(float dir) {
 //	}
 	
 }
-public boolean colisionSprite(Cuadrado c, float posAuxX, float posAuxY) {
+public boolean colisionCuadrado(Cuadrado c, float posAuxX, float posAuxY) {
 	boolean colision = false;
 	int i=0;
 	do {
-		if(posAuxY==mapa.getSprites().get(i).getY() && posAuxX == mapa.getSprites().get(i).getX()) {
+		if(posAuxY==mapa.getCuadrados().get(i).getSpr().getY() && posAuxX == mapa.getCuadrados().get(i).getSpr().getX()) {
 			colision=true;
 		}
 		i++;
-	}while(i<mapa.getSprites().size() && !colision);
+	}while(i<mapa.getCuadrados().size() && !colision);
 		
 
 	return colision;
@@ -169,13 +180,14 @@ public void bajarPieza() {
 		for (int i = 0; i < p.getTetromino().length; i++) {
 			float pos=p.getTetromino()[i].getSpr().getY()- p.getTetromino()[i].getMovimiento();
 			p.getTetromino()[i].getSpr().setY(pos);
+//			System.out.println(pos);
 		}
+//		System.out.println("-------------------");
 	}
 }
 @Override
 public void keyDown(int keycode) {
 	if(io.isUp()) {
-		System.out.println("pieza");
 		girarPieza();
 	}
 	if(io.isDown()) {
@@ -192,11 +204,31 @@ public void keyDown(int keycode) {
 		
 	}
 }
-private void girarPieza() {
-	Cuadrado[] t = p.getTetromino();
-	for (int i = 0; i < t.length; i++) {
-		t[i].getSpr().rotate90(false);
+private void girarPieza() { //Odio este codigo
+	boolean[][] new_piece = new boolean[p.getTipo().length][p.getTipo()[0].length];
+	for(int i = 0; i < p.getTipo().length; i++){
+		for(int j = 0; j < p.getTipo()[i].length; j++){
+			new_piece[j][ p.getTipo().length - 1 - i ] = p.getTipo()[i][j]; //i=0 j=1
+			
+			
+			
+			System.out.print(" | ");
+			System.out.print(p.getTipo()[i][j]? "X":"O");
+			System.out.print(" | ");
+////			System.out.print(new_piece[i][j]?"X":"O");
+//			System.out.print(" | ");
+		}
+		
+	
+		System.out.println(" ");
 	}
+	p.rotar(new_piece);
+//	for (int i= 0; i < new_piece.length; i++) {
+//		for(int j = 0; j < new_piece[i].length; j++){
+//			new_piece[i][j]
+//		}
+//	}
+	System.out.println(" ");
 //		t[i].getSpr().setX(t[i].getSpr().getY());
 //		new_piece[j][ piece.length - 1 - i ] = piece[i][j]; 
 	}
@@ -222,14 +254,21 @@ public void keyUp(int keycode) {
 }
 
 public void verifLineaCompl() {
-	if(mapa.getSprites().size()>0) {
-		for (int i = 0; i < mapa.getSprites().size(); i++) {
-			mapa.getSprites().get(i).getX();
+	for (int i = 0; i < mapa.getGrilla().length; i++) { //Posicion Y
+		int tmp=0;
+		for (int j = 0; j < mapa.getGrilla()[i].length; j++) {//Posicion X
+			if(mapa.getGrilla()[i][j]==true) {
+				tmp++;
+			}
 		}
-		
+		if(tmp==mapa.getGrilla()[i].length) {
+			mapa.borrarLinea(i);
+		}
+	}
+//		mapa.mirarGrilla();
 	}
 }
-}
+
 	
 		
 

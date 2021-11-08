@@ -3,16 +3,17 @@ package com.proyecto.piezas;
 import com.proyecto.utiles.Utiles;
 
 public enum Piezas {
-I(new boolean[][]{  {Utiles.O,Utiles.X,Utiles.O}, 
-					{Utiles.O,Utiles.X,Utiles.O}, 
-					{Utiles.O,Utiles.X,Utiles.O},
-					{Utiles.O,Utiles.X,Utiles.O}}),
+I(new boolean[][]{  {Utiles.O,Utiles.X,Utiles.O,Utiles.O}, 
+					{Utiles.O,Utiles.X,Utiles.O,Utiles.O}, 
+					{Utiles.O,Utiles.X,Utiles.O,Utiles.O},
+					{Utiles.O,Utiles.X,Utiles.O,Utiles.O}}),
 
 R(new boolean[][]  {{Utiles.X,Utiles.X},
 					{Utiles.X,Utiles.X}}),
 
 T(new boolean[][] { {Utiles.O,Utiles.X,Utiles.O}, 
-					{Utiles.X,Utiles.X,Utiles.X}}),
+					{Utiles.X,Utiles.X,Utiles.X},
+					{Utiles.O,Utiles.O,Utiles.O}}),
 
 L(new boolean[][] { {Utiles.X,Utiles.X,Utiles.O},
 					{Utiles.O,Utiles.X,Utiles.O},
