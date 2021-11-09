@@ -7,7 +7,8 @@ CELESTE("LightBlue.png"),
 NARANJA("Orange.png"), 
 VIOLETA("Purple.png"),
 ROJO("Red.png"), 
-AMARILLO("Yellow.png");
+AMARILLO("Yellow.png"),
+GRIS("Gray.png");
  private String dir;	
 
 	

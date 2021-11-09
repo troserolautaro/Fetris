@@ -10,13 +10,15 @@ import com.proyecto.utiles.Config;
 
 public class ScreenJuego implements Screen {
  private Juego juego;
+ private Juego juego2;
  private OrthographicCamera cam;
  private Stage stage;
 	@Override
 	public void show() {
 		stage= new Stage();
 		iniciarCam();
-		juego= new Juego();
+		juego2= new Juego(false);
+		juego= new Juego(true);
 	}
 
 	public Juego getJuego() {
@@ -29,7 +31,9 @@ public class ScreenJuego implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.draw();
 		juego.update(cam, delta);
+		juego2.update(cam, delta);
 		juego.render();
+		juego2.render();
 //		debug();
 		cam.update();
 	}

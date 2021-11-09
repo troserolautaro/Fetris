@@ -13,7 +13,6 @@ import com.proyecto.utiles.Utiles;
 
 public class Juego implements JuegoEventListener{
 	private Mapa mapa;
-	private Mapa mapa2;
 	private boolean nueva;
 	public KeyListener io = new KeyListener();
 	private float tiempoMov;
@@ -22,11 +21,10 @@ public class Juego implements JuegoEventListener{
 	
 //	private final int alto = 20, ancho = 10;
 //	private final int[][] area = new int[alto][ancho];
-	public Juego() {
-		Utiles.listener=this;
+	public Juego(boolean mapa) {
+		Utiles.listeners.add(this);
 		Gdx.input.setInputProcessor(io);
-		this.mapa = new Mapa(true);
-		this.mapa2= new Mapa(false);
+		this.mapa = new Mapa(mapa);
 		nueva=true;
 	}
 	public void update(OrthographicCamera cam, float delta) {
@@ -37,19 +35,17 @@ public class Juego implements JuegoEventListener{
 		Mundo.batch.setProjectionMatrix(cam.combined);
 		cam.update();
 		updatePieza();
-		verifLineaCompl();
+	
 
 	}
 	public void nuevaPieza() {
-		int ind = Utiles.r.nextInt(7);
+		int ind = Utiles.r.nextInt(Colores.values().length-1);
 		p = new Pieza(Colores.values()[ind].getDir(), 12,mapa.getSpr().getX()+ mapa.getSpr().getWidth()/2 , mapa.getSpr().getY()+mapa.getSpr().getHeight() - 24);
 	}
 	public Mapa getMapa() {
 		return mapa;
 	}
-	public Mapa getMapa2() {
-		return mapa2;
-	}
+
 	public void render() {
 		Mundo.batch.begin();
 		mapa.render();
@@ -101,6 +97,8 @@ public class Juego implements JuegoEventListener{
 			for (int j = 0; j < p.getTetromino().length; j++) {
 				mapa.getCuadrados().add(p.getTetromino()[j]);
 				mapa.updateGrilla(p.getTetromino()[j]);
+				verifLineaCompl();
+				
 			}
 			nueva=true;
 		}
@@ -152,9 +150,9 @@ public void moverPieza(float dir) {
 		for (int i = 0; i <	t.length; i++) {
 			float pos=t[i].getSpr().getX()+dir*t[i].getTamaño();
 			t[i].getSpr().setX(pos);
-			System.out.println(pos);
+//			System.out.println(pos);
 		}
-		System.out.println("-------------------");
+//		System.out.println("-------------------");
 	}
 //	for (int i = 0; i < t.length; i++) {
 //		t[i].setX(verifMov(t[i],dir));
@@ -191,6 +189,7 @@ public void keyDown(int keycode) {
 		girarPieza();
 	}
 	if(io.isDown()) {
+		System.out.println("bajo");
 		bajarPieza();
 	}
 	if(io.isRight()) {
@@ -222,13 +221,20 @@ private void girarPieza() { //Odio este codigo
 	
 		System.out.println(" ");
 	}
-	p.rotar(new_piece);
+//	p.comparacion(new_piece);
+//	p.rotar(new_piece);
+	System.out.println(" ");
 //	for (int i= 0; i < new_piece.length; i++) {
 //		for(int j = 0; j < new_piece[i].length; j++){
-//			new_piece[i][j]
+//			System.out.print(" | ");
+//			System.out.print(new_piece[i][j]? "X":"O");
+//			System.out.print(" | ");
+//		
 //		}
+//		System.out.println(" ");
 //	}
-	System.out.println(" ");
+//	System.out.println(" ");
+
 //		t[i].getSpr().setX(t[i].getSpr().getY());
 //		new_piece[j][ piece.length - 1 - i ] = piece[i][j]; 
 	}
@@ -263,10 +269,41 @@ public void verifLineaCompl() {
 		}
 		if(tmp==mapa.getGrilla()[i].length) {
 			mapa.borrarLinea(i);
+			
 		}
 	}
 //		mapa.mirarGrilla();
 	}
+
+@Override
+public void enviarLineas() {
+	for (int i = 0; i < Utiles.listeners.size(); i++) {
+		if(Utiles.listeners.get(i)!=this) {
+			Utiles.listeners.get(i).recibirLineas(mapa.getLineas());
+		}
+	}
+	
+	
+}
+@Override
+public void recibirLineas(int lineas) {
+		System.out.println(lineas);
+		int borra = Utiles.r.nextInt(lineas);
+		for (int i = 0; i < lineas; i++) {
+			mapa.subirCuadrados(i);
+			añadirLineas(i);
+		}
+	
+		
+	
+	
+}
+private void añadirLineas(int y) {
+	for (int i = 0; i < mapa.getGrilla()[0].length; i++) {
+		mapa.getCuadrados().add((new Cuadrado(Colores.GRIS.getDir(), 12, i, y)));
+	}
+	
+}
 }
 
 	

@@ -1,5 +1,6 @@
 package com.proyecto.utiles;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
@@ -15,7 +16,7 @@ public final class Utiles {
 
 	public static Random r = new Random();
 	public static Scanner s = new Scanner(System.in);
-	public static JuegoEventListener listener;
+	public static ArrayList<JuegoEventListener> listeners = new ArrayList <JuegoEventListener>();
 	public static final  float  PPM= 100;
 	
 	public static void delay(long milis) {
@@ -76,13 +77,10 @@ public final class Utiles {
         return valor;
     }
 
-public static Mapa obtenerMapa(int i) {
+public static Mapa obtenerMapa() {
 	ScreenJuego sj = (ScreenJuego) Mundo.app.getScreen();
-	if (i==1) {
-		return sj.getJuego().getMapa();
-	}else{
-		return sj.getJuego().getMapa2();
-	}
+	return sj.getJuego().getMapa();
+	
 	
 		
 	}

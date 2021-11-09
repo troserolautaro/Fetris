@@ -9,7 +9,13 @@ public class Cuadrado {
 	private Texture  text;
 	private Sprite spr;
 	private  int movimiento;
+//	private boolean activo;
+//	public boolean isActivo() {
+//		return activo;
+//	}
+
 	public Cuadrado(String text,int tamaño, float x, float y) {
+//		this.activo=activo;
 		this.tamaño=tamaño;
 		this.movimiento=tamaño;
 		this.text=new Texture(text);
@@ -17,11 +23,12 @@ public class Cuadrado {
 		this.spr.setBounds(x,y,this.tamaño,this.tamaño);
 	}
 
-	public int getXGrilla() {
-		return (int) ((spr.getX()-32)/this.tamaño);
+	public int getXGrilla(float pos) {
+		return	(int) ((spr.getX()-(pos ))/this.tamaño)-1;
 	}
-	public int getYGrilla() {
-		return (int) ((spr.getY()-this.tamaño)/this.tamaño);
+	public int getYGrilla(float pos) {
+//		System.out.println((spr.getY()-this.tamaño)/this.tamaño);
+		return  (int) ((spr.getY()-(pos))/this.tamaño)-1;
 	}
 
 	public void render() {

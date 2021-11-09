@@ -15,7 +15,10 @@ public class KeyListener implements InputProcessor {
 		if(keycode==Keys.LEFT) left = true;
 		if(keycode==Keys.RIGHT) right = true;	
 		if(keycode==Keys.SPACE) space = true;
-		Utiles.listener.keyDown(keycode);
+		for (int i = 0; i < Utiles.listeners.size(); i++) {
+			Utiles.listeners.get(i).keyDown(keycode);
+		}
+	
 		return false;
 	}
 
@@ -26,7 +29,9 @@ public class KeyListener implements InputProcessor {
 		if(keycode==Keys.LEFT) left = false;
 		if(keycode==Keys.RIGHT) right = false;	
 		if(keycode==Keys.SPACE) space = false;
-		Utiles.listener.keyUp(keycode);
+		for (int i = 0; i < Utiles.listeners.size(); i++) {
+			Utiles.listeners.get(i).keyUp(keycode);
+		}
 		return false;
 	}
 
