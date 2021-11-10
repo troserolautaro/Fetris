@@ -187,7 +187,8 @@ public void bajarPieza() {
 @Override
 public void keyDown(int keycode) {
 	if(io.isUp()) {
-		girarPieza();
+//		girarPieza();
+		mapa.burbuja(mapa.getCuadrados());
 	}
 	if(io.isDown()) {
 //		System.out.println("bajo");

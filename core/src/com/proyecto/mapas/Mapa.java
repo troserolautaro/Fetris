@@ -93,33 +93,45 @@ public class Mapa {
 				}
 			}
 			if(tmp==grilla[i].length && bandera) {
-				for (int j = 0; j < cuadrados.size(); j++) {
-					if(cuadrados.get(j).getYGrilla(spr.getY()) > i) {
-						cuadrados.get(j).getYGrilla(spr.getY());
-//						cuadrados.get(j).getSpr().setY(cuadrados.get(j).getSpr().getY()-(cuadrados.get(j).getMovimiento()));
-//						agregarAGrilla(cuadrados.get(j));
-//						mirarGrilla();
-					}
-				}
+				burbuja(cuadrados);
+//				for (int j = 0; j < cuadrados.size(); j++) {
+//					if(cuadrados.get(j).getYGrilla(spr.getY()) > i) {
+//						cuadrados.get(j).getYGrilla(spr.getY());
+////						cuadrados.get(j).getSpr().setY(cuadrados.get(j).getSpr().getY()-(cuadrados.get(j).getMovimiento()));
+////						agregarAGrilla(cuadrados.get(j));
+////						mirarGrilla();
+//					}
+//				}
 			}
 		}		
 	}
-	public Cuadrado[] burbuja(Cuadrado[] arreglo){
-    Cuadrado auxiliar;
-    Cuadrado[] arregloOrdenado;
-    for(int i = 2; i < arreglo.length; i++)
-    {
-      for(int j = 0;j < arreglo.length-i;j++)
-      {
-        if(arreglo[j].getYGrilla(spr.getY()) > arreglo[j+1].getYGrilla(spr.getY())) {
-          auxiliar = arreglo[j];
-          arreglo[j] = arreglo[j+1];
-          arreglo[j+1] = auxiliar;
-        }   
-      }
-    }
-    arregloOrdenado = arreglo;
-    return arregloOrdenado;
+	public void burbuja(ArrayList<Cuadrado> arreglo){
+		Cuadrado auxiliar;
+		for (int i = 0; i < arreglo.size(); i++) {
+			System.out.println(arreglo.get(i).getYGrilla(spr.getY()));
+		}
+		for (int i = 0; i < arreglo.size(); i++) {
+			for(int j=i + 1; j<arreglo.size(); j++) {
+				if(arreglo.get(i).getYGrilla(spr.getY()) > arreglo.get(j).getYGrilla(spr.getY())) {
+					auxiliar = arreglo.get(i);
+					arreglo.set(i, arreglo.get(j));
+					arreglo.set(j, auxiliar);
+				}
+			}
+			
+		}
+//		for (int i = 0; i < arreglo.size(); i++) {
+//			for(int j = 0;j < arreglo.size()-i;j++) {
+//				if(arreglo.get(j).getYGrilla(spr.getY()) > arreglo.get(j+1).getYGrilla(spr.getY())) {
+//					auxiliar = arreglo.get(j);
+//					arreglo.set(j, arreglo.get(j+1));
+//					arreglo.set(j+1, auxiliar);
+//				}   
+//			}
+//	}
+		for (int i = 0; i < arreglo.size(); i++) {
+			System.out.println(arreglo.get(i).getYGrilla(spr.getY()));
+		}
   }
 	
 	public void subirCuadrados(int y) {
