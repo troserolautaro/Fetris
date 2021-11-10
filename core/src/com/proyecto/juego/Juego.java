@@ -18,13 +18,14 @@ public class Juego implements JuegoEventListener{
 	private float tiempoMov;
 	private float intervaloCaida= 0.6f;
 	private Pieza p;
-	
+	private boolean prueba;
 //	private final int alto = 20, ancho = 10;
 //	private final int[][] area = new int[alto][ancho];
 	public Juego(boolean mapa) {
 		Utiles.listeners.add(this);
 		Gdx.input.setInputProcessor(io);
 		this.mapa = new Mapa(mapa);
+		prueba=mapa;
 		nueva=true;
 	}
 	public void update(OrthographicCamera cam, float delta) {
@@ -95,11 +96,11 @@ public class Juego implements JuegoEventListener{
 		
 		if(!moverse) {//Si colisiona y no puede moverse en el eje vertical, guardar el sprite y generar una nueva pieza
 			for (int j = 0; j < p.getTetromino().length; j++) {
+//				System.out.println(p.getTetromino()[j].getYGrilla(j));
 				mapa.getCuadrados().add(p.getTetromino()[j]);
-				mapa.updateGrilla(p.getTetromino()[j]);
-				verifLineaCompl();
-				
+				mapa.agregarAGrilla(p.getTetromino()[j]);	
 			}
+			verifLineaCompl();
 			nueva=true;
 		}
 		
@@ -189,7 +190,7 @@ public void keyDown(int keycode) {
 		girarPieza();
 	}
 	if(io.isDown()) {
-		System.out.println("bajo");
+//		System.out.println("bajo");
 		bajarPieza();
 	}
 	if(io.isRight()) {
@@ -260,49 +261,63 @@ public void keyUp(int keycode) {
 }
 
 public void verifLineaCompl() {
+	int linea =0;
 	for (int i = 0; i < mapa.getGrilla().length; i++) { //Posicion Y
 		int tmp=0;
 		for (int j = 0; j < mapa.getGrilla()[i].length; j++) {//Posicion X
-			if(mapa.getGrilla()[i][j]==true) {
+			if(mapa.getGrilla()[i][j]) {
 				tmp++;
 			}
 		}
 		if(tmp==mapa.getGrilla()[i].length) {
-			mapa.borrarLinea(i);
-			
+			mapa.borrarLinea(i);  
+			linea++;
 		}
 	}
+	if(linea>0) {
+		mapa.bajarCuadrados();
+	}
+
+//		System.out.println(min);
 //		mapa.mirarGrilla();
 	}
 
 @Override
 public void enviarLineas() {
+	
 	for (int i = 0; i < Utiles.listeners.size(); i++) {
 		if(Utiles.listeners.get(i)!=this) {
-			Utiles.listeners.get(i).recibirLineas(mapa.getLineas());
+			System.out.println(Utiles.listeners.get(i));
+//			Utiles.listeners.get(i).recibirLineas(1);
 		}
 	}
 	
 	
 }
 @Override
-public void recibirLineas(int lineas) {
-		System.out.println(lineas);
-		int borra = Utiles.r.nextInt(lineas);
-		for (int i = 0; i < lineas; i++) {
-			mapa.subirCuadrados(i);
-			añadirLineas(i);
-		}
-	
-		
-	
-	
+public void recibirLineas(int linea) {
+//		System.out.println(lineas);
+		int bloqueBorrado = Utiles.r.nextInt(mapa.getGrilla()[0].length );
+			mapa.subirCuadrados(0);
+			añadirLineas(0, bloqueBorrado);
 }
-private void añadirLineas(int y) {
-	for (int i = 0; i < mapa.getGrilla()[0].length; i++) {
-		mapa.getCuadrados().add((new Cuadrado(Colores.GRIS.getDir(), 12, i, y)));
+private void añadirLineas(int y, int bloqueBorrado) {
+	mapa.mirarGrilla();
+	for (int i = 0; i < mapa.getGrilla()[y].length; i++) {
+		if(i!=bloqueBorrado) {
+			if(!prueba) {
+//				System.out.println(i); 
+			}
+			mapa.getCuadrados().add((new Cuadrado(Colores.GRIS.getDir(), 12, i*12 + mapa.getSpr().getX()+12 , y + mapa.getSpr().getY() +12 )));
+			
+		}
+		
 	}
-	
+	for (int i = 0; i < mapa.getCuadrados().size(); i++) {
+		mapa.agregarAGrilla(mapa.getCuadrados().get(i));
+	}
+	System.out.println(prueba? "Juego 1" : "Juego 2");
+	mapa.mirarGrilla();
 }
 }
 

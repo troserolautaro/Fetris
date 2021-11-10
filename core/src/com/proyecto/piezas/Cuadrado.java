@@ -24,10 +24,10 @@ public class Cuadrado {
 	}
 
 	public int getXGrilla(float pos) {
-		return	(int) ((spr.getX()-(pos ))/this.tamaño)-1;
+		return	(int) ((spr.getX()-(pos))/this.tamaño)-1;
 	}
 	public int getYGrilla(float pos) {
-//		System.out.println((spr.getY()-this.tamaño)/this.tamaño);
+//		System.out.println((spr.getY()-(pos))/this.tamaño-1);
 		return  (int) ((spr.getY()-(pos))/this.tamaño)-1;
 	}
 

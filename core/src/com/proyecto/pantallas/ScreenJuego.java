@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.proyecto.juego.Juego;
 import com.proyecto.utiles.Config;
@@ -42,6 +43,7 @@ public class ScreenJuego implements Screen {
 //		if(Gdx.input.justTouched()) {
 //	           System.out.println(cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0))); 
 //		}
+//	}
 //		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
 //			
 //			cam.position.y+=1;
