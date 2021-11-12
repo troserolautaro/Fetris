@@ -77,45 +77,43 @@ public class Mapa {
 			}while(j<cuadrados.size() && !bandera);
 		}
 		tmpBorrar.removeAll(tmpBorrar);
+		
 	}
 	
 	public void bajarCuadrados() {
-		mirarGrilla();
 		boolean bandera=false;
+		
 		for (int i =grilla.length-1; i > -1; i--) {
 			int tmp=0;
 			for (int j = 0; j < grilla[i].length; j++) {
 				if(grilla[i][j]) {
-//					System.out.println("entro");
 					bandera=true;
 				}else {
 					tmp++;
 				}
 			}
 			if(tmp==grilla[i].length && bandera) {
-				burbuja(cuadrados);
-//				for (int j = 0; j < cuadrados.size(); j++) {
-//					if(cuadrados.get(j).getYGrilla(spr.getY()) > i) {
-//						cuadrados.get(j).getYGrilla(spr.getY());
-////						cuadrados.get(j).getSpr().setY(cuadrados.get(j).getSpr().getY()-(cuadrados.get(j).getMovimiento()));
-////						agregarAGrilla(cuadrados.get(j));
-////						mirarGrilla();
-//					}
-//				}
+				for (int j = 0; j < cuadrados.size(); j++) {
+					if(cuadrados.get(j).getYGrilla(spr.getY()) > i) {
+						quitarAGrilla(cuadrados.get(j));
+						cuadrados.get(j).getSpr().setY(cuadrados.get(j).getSpr().getY()-(cuadrados.get(j).getMovimiento()));
+						agregarAGrilla(cuadrados.get(j));
+
+					}
+				}
+			
 			}
-		}		
-	}
-	public void burbuja(ArrayList<Cuadrado> arreglo){
-		Cuadrado auxiliar;
-		for (int i = 0; i < arreglo.size(); i++) {
-			System.out.println(arreglo.get(i).getYGrilla(spr.getY()));
 		}
-		for (int i = 0; i < arreglo.size(); i++) {
-			for(int j=i + 1; j<arreglo.size(); j++) {
-				if(arreglo.get(i).getYGrilla(spr.getY()) > arreglo.get(j).getYGrilla(spr.getY())) {
-					auxiliar = arreglo.get(i);
-					arreglo.set(i, arreglo.get(j));
-					arreglo.set(j, auxiliar);
+	
+	}
+	public void ordBurbCuadrados(){
+		Cuadrado auxiliar;
+		for (int i = 0; i < cuadrados.size(); i++) {
+			for(int j=i + 1; j < cuadrados.size(); j++) {
+				if(cuadrados.get(i).getYGrilla(spr.getY()) > cuadrados.get(j).getYGrilla(spr.getY())) {
+					auxiliar = cuadrados.get(i);
+					cuadrados.set(i, cuadrados.get(j));
+					cuadrados.set(j, auxiliar);
 				}
 			}
 			
@@ -129,18 +127,32 @@ public class Mapa {
 //				}   
 //			}
 //	}
-		for (int i = 0; i < arreglo.size(); i++) {
-			System.out.println(arreglo.get(i).getYGrilla(spr.getY()));
-		}
+	
   }
+public void masAltoMasBajo(){
+		Cuadrado auxiliar;
+		for (int i = 0; i < cuadrados.size(); i++) {
+			for(int j=i + 1; j < cuadrados.size(); j++) {
+				if(cuadrados.get(i).getYGrilla(spr.getY()) < cuadrados.get(j).getYGrilla(spr.getY())) {
+					auxiliar = cuadrados.get(i);
+					cuadrados.set(i, cuadrados.get(j));
+					cuadrados.set(j, auxiliar);
+				}
+			}
+			
+		}
+}
 	
 	public void subirCuadrados(int y) {
+		mirarGrilla();
 		for (int i = 0; i < cuadrados.size(); i++) {
 			if(cuadrados.get(i).getYGrilla(spr.getY())>=y) {
+				quitarAGrilla(cuadrados.get(i));
 				cuadrados.get(i).getSpr().setY(cuadrados.get(i).getSpr().getY()+cuadrados.get(i).getMovimiento());
 				agregarAGrilla(cuadrados.get(i));
 			}
-		}		
+		}
+		mirarGrilla();
 	}
 
 	

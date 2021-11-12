@@ -41,7 +41,7 @@ public class Juego implements JuegoEventListener{
 	}
 	public void nuevaPieza() {
 		int ind = Utiles.r.nextInt(Colores.values().length-1);
-		p = new Pieza(Colores.values()[ind].getDir(), 12,mapa.getSpr().getX()+ mapa.getSpr().getWidth()/2 , mapa.getSpr().getY()+mapa.getSpr().getHeight() - 24);
+		p = new Pieza(Colores.values()[ind].getDir(), 12,mapa.getSpr().getX()+ mapa.getSpr().getWidth()/2 , mapa.getSpr().getY()+mapa.getSpr().getHeight() - 24,19,5);
 	}
 	public Mapa getMapa() {
 		return mapa;
@@ -61,12 +61,6 @@ public class Juego implements JuegoEventListener{
 		tiempoMov+=Gdx.graphics.getDeltaTime();
 		if(tiempoMov>intervaloCaida) {
 			bajarPieza();
-//			for (int i = 0; i < p.getTetromino().length; i++) {
-//				System.out.println("Cuadrado " + i);
-//				System.out.println("X: " + p.getTetromino()[i].getXGrilla());
-//				System.out.println("Y: " + p.getTetromino()[i].getYGrilla());
-//			}
-			
 			tiempoMov=0;
 			}
 			
@@ -96,10 +90,10 @@ public class Juego implements JuegoEventListener{
 		
 		if(!moverse) {//Si colisiona y no puede moverse en el eje vertical, guardar el sprite y generar una nueva pieza
 			for (int j = 0; j < p.getTetromino().length; j++) {
-//				System.out.println(p.getTetromino()[j].getYGrilla(j));
 				mapa.getCuadrados().add(p.getTetromino()[j]);
 				mapa.agregarAGrilla(p.getTetromino()[j]);	
 			}
+			mapa.ordBurbCuadrados();
 			verifLineaCompl();
 			nueva=true;
 		}
@@ -108,7 +102,7 @@ public class Juego implements JuegoEventListener{
 	}
 
 
-public boolean verifMov(Cuadrado[] t, float dir) { //Verificar colisiones en X de las piezas
+public boolean verifMov(Cuadrado[] t, int dir) { //Verificar colisiones en X de las piezas
 	boolean mov = true;
 	int i=0;
 	
@@ -140,12 +134,11 @@ public boolean verifMov(Cuadrado[] t, float dir) { //Verificar colisiones en X d
 	}
 	i++;
 	}while(i<t.length && mov);
-	
 	return mov;
 	}
 
 
-public void moverPieza(float dir) {
+public void moverPieza(int dir) {
 	Cuadrado[] t = 	p.getTetromino();
 	if(verifMov(t,dir)) {//Si devuelve verdadero puede avanzar
 		for (int i = 0; i <	t.length; i++) {
@@ -155,11 +148,7 @@ public void moverPieza(float dir) {
 		}
 //		System.out.println("-------------------");
 	}
-//	for (int i = 0; i < t.length; i++) {
-//		t[i].setX(verifMov(t[i],dir));
-//		t[i].getSpr().setX(t[i].getX());
-//	}
-	
+	p.setFilaX(p.getFilaX()+dir);
 }
 public boolean colisionCuadrado(Cuadrado c, float posAuxX, float posAuxY) {
 	boolean colision = false;
@@ -179,19 +168,16 @@ public void bajarPieza() {
 		for (int i = 0; i < p.getTetromino().length; i++) {
 			float pos=p.getTetromino()[i].getSpr().getY()- p.getTetromino()[i].getMovimiento();
 			p.getTetromino()[i].getSpr().setY(pos);
-//			System.out.println(pos);
 		}
-//		System.out.println("-------------------");
+	p.setFilaY(p.getFilaY()-1);
 	}
 }
 @Override
 public void keyDown(int keycode) {
 	if(io.isUp()) {
-//		girarPieza();
-		mapa.burbuja(mapa.getCuadrados());
+		girarPieza();
 	}
 	if(io.isDown()) {
-//		System.out.println("bajo");
 		bajarPieza();
 	}
 	if(io.isRight()) {
@@ -210,35 +196,9 @@ private void girarPieza() { //Odio este codigo
 	for(int i = 0; i < p.getTipo().length; i++){
 		for(int j = 0; j < p.getTipo()[i].length; j++){
 			new_piece[j][ p.getTipo().length - 1 - i ] = p.getTipo()[i][j]; //i=0 j=1
-			
-			
-			
-			System.out.print(" | ");
-			System.out.print(p.getTipo()[i][j]? "X":"O");
-			System.out.print(" | ");
-////			System.out.print(new_piece[i][j]?"X":"O");
-//			System.out.print(" | ");
 		}
-		
-	
-		System.out.println(" ");
 	}
-//	p.comparacion(new_piece);
-//	p.rotar(new_piece);
-	System.out.println(" ");
-//	for (int i= 0; i < new_piece.length; i++) {
-//		for(int j = 0; j < new_piece[i].length; j++){
-//			System.out.print(" | ");
-//			System.out.print(new_piece[i][j]? "X":"O");
-//			System.out.print(" | ");
-//		
-//		}
-//		System.out.println(" ");
-//	}
-//	System.out.println(" ");
-
-//		t[i].getSpr().setX(t[i].getSpr().getY());
-//		new_piece[j][ piece.length - 1 - i ] = piece[i][j]; 
+	p= new Pieza(p.getText(), p.getTamaño(), p.getX(), p.getY(),p.getFilaY(),p.getFilaX(), new_piece, mapa.getSpr().getX(), mapa.getSpr().getY());
 	}
 	
 
@@ -262,7 +222,7 @@ public void keyUp(int keycode) {
 }
 
 public void verifLineaCompl() {
-	int linea =0;
+	int lineas =0;
 	for (int i = 0; i < mapa.getGrilla().length; i++) { //Posicion Y
 		int tmp=0;
 		for (int j = 0; j < mapa.getGrilla()[i].length; j++) {//Posicion X
@@ -272,53 +232,44 @@ public void verifLineaCompl() {
 		}
 		if(tmp==mapa.getGrilla()[i].length) {
 			mapa.borrarLinea(i);  
-			linea++;
+			lineas++;
 		}
 	}
-	if(linea>0) {
+	if(lineas>0) {
 		mapa.bajarCuadrados();
+		enviarLineas(lineas);
 	}
-
-//		System.out.println(min);
-//		mapa.mirarGrilla();
 	}
 
 @Override
-public void enviarLineas() {
-	
+public void enviarLineas(int lineas) {
 	for (int i = 0; i < Utiles.listeners.size(); i++) {
 		if(Utiles.listeners.get(i)!=this) {
-			System.out.println(Utiles.listeners.get(i));
-//			Utiles.listeners.get(i).recibirLineas(1);
+			Utiles.listeners.get(i).recibirLineas(lineas);
 		}
 	}
 	
 	
 }
 @Override
-public void recibirLineas(int linea) {
-//		System.out.println(lineas);
+public void recibirLineas(int lineas) {
 		int bloqueBorrado = Utiles.r.nextInt(mapa.getGrilla()[0].length );
+		for (int i = 0; i < lineas; i++) {
+			mapa.masAltoMasBajo();
 			mapa.subirCuadrados(0);
-			añadirLineas(0, bloqueBorrado);
+			añadirLinea(0, bloqueBorrado);
+		}
 }
-private void añadirLineas(int y, int bloqueBorrado) {
-	mapa.mirarGrilla();
+private void añadirLinea(int y, int bloqueBorrado) {
 	for (int i = 0; i < mapa.getGrilla()[y].length; i++) {
 		if(i!=bloqueBorrado) {
-			if(!prueba) {
-//				System.out.println(i); 
-			}
 			mapa.getCuadrados().add((new Cuadrado(Colores.GRIS.getDir(), 12, i*12 + mapa.getSpr().getX()+12 , y + mapa.getSpr().getY() +12 )));
-			
 		}
 		
 	}
 	for (int i = 0; i < mapa.getCuadrados().size(); i++) {
 		mapa.agregarAGrilla(mapa.getCuadrados().get(i));
 	}
-	System.out.println(prueba? "Juego 1" : "Juego 2");
-	mapa.mirarGrilla();
 }
 }
 
