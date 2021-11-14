@@ -144,7 +144,6 @@ public void masAltoMasBajo(){
 }
 	
 	public void subirCuadrados(int y) {
-		mirarGrilla();
 		for (int i = 0; i < cuadrados.size(); i++) {
 			if(cuadrados.get(i).getYGrilla(spr.getY())>=y) {
 				quitarAGrilla(cuadrados.get(i));
@@ -152,7 +151,7 @@ public void masAltoMasBajo(){
 				agregarAGrilla(cuadrados.get(i));
 			}
 		}
-		mirarGrilla();
+
 	}
 
 	

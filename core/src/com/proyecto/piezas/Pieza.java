@@ -99,15 +99,6 @@ public class Pieza {
 				int k=0;
 				do {
 					if(tipoTmp[j][k]) {
-						if(filaX<=0) {
-							filaX+=1;
-						}else if(filaX>=9) {
-							filaX-=1;
-						}
-						if(filaY<0) {
-							filaY+=1;
-						}
-						System.out.println(filaX);
 						tetromino[i]=(new Cuadrado(this.text, this.tamaño, (filaX+k)*this.tamaño+ correcionX, (filaY-j)*this.tamaño+correcionY));
 						tipoTmp[j][k]=false;
 						bandera=true;
@@ -126,75 +117,6 @@ public class Pieza {
 		this.filaX = filaX;
 	}
 	
-//	public void rotar(boolean[][] tmp) { //44 mas a la izq, 152 mas a la derecha 
-//		clonarArray(tmp,tipoTmp);
-//		int izq= posIzq();
-//		int der= posDer();
-//		int alta= posAlta();
-//		int baja= posBaja();
-//		System.out.println(izq + " " + der + " " +alta + " " + baja);
-//		for (int i = 0; i <tetromino.length; i++) {
-//			int j=0;
-//			boolean bandera=false;
-//			int x=0;
-//			int y=0;
-//			do {
-//				int k=0;
-//				do {
-//					if(tipoTmp[j][k]) { //Fijarme como comparar las dos matrices para obtener bien la posicion con respecoo a la matriz
-////						if(k==0) {
-////							x=izq;
-////							}else if(k==1) {
-////								if(izq+1==der) {
-////									x=der;
-////								}else {
-////									x=(izq + der)/2;
-////								}
-////								
-////								}else {
-////									if(izq+1==der) {
-////									x=der+1;
-////									}else {
-////										x=der;
-////									}
-////									
-////										}
-////						if(j==0) {
-////							y=alta;
-////							}else if(j==1) {
-////								y= (alta + baja)/2;
-////							}else {
-////								y=baja;
-////								}
-//						syso(x,y,i);
-//						tetromino[i].getSpr().setX((x*tetromino[i].getTamaño())+tetromino[i].getTamaño()*2+8);
-//						tetromino[i].getSpr().setY((y*tetromino[i].getTamaño())+tetromino[i].getTamaño()+4);
-////						tetromino[i]=(new Cuadrado(text, tamaño, x+((k-1)*tamaño), y-(j*tamaño)));
-//						tipoTmp[j][k]=false;
-//						bandera=true;
-//					}
-//					k++;
-//				}while(k<tipoTmp[j].length && !bandera);
-//				j++;
-//			}while(j<tipoTmp.length && !bandera);
-//		}
-//		clonarArray(tmp,tipo);			
-//		
-//
-//	}
-
-//	private void syso(int x, int y, int i) {
-//		System.out.println("---------------------");
-//		System.out.println("Cuadrado: " + i);
-//		System.out.println("X:");
-//		System.out.println(x);
-//		System.out.println(x*tetromino[i].getTamaño()+32);
-//		System.out.println("Y:");
-//		System.out.println(y);
-//		System.out.println(y*tetromino[i].getTamaño()+tetromino[i].getTamaño());
-//		
-//	}
-
 	private void buscarPieza() {
 		int ind = Utiles.r.nextInt(Piezas.values().length);
 		boolean[][] tmp = Piezas.values()[ind].getPieza();
@@ -228,22 +150,6 @@ public class Pieza {
 			this.tetromino[i].getSpr().draw(Mundo.batch);
 		}
 	}
-//	public Vector2 verifPosPieza() {
-//		int i;
-//	int j;
-//		Mapa mapa = Utiles.obtenerMapa(nmap );
-//		for ( i= 0; i < mapa.getGrilla().length; i++) {
-//			for (j = 0; j < mapa.getGrilla()[i].length; j++) {
-//				if (i==(int) (this.x-this.tamaño*3)/12 && j==(int) (this.y-this.tamaño)/12) {
-//					
-//				}
-//		
-//		 }
-//		}
-
-//		return new Vector2(i,j);
-//	}
-
 //	public int posAlta() {
 //		int max=0;
 //		for (int i = 0; i < tetromino.length; i++) {
@@ -320,16 +226,4 @@ public class Pieza {
 
 
 
-//public void updateGrilla(int a) {
-//	for (int i = 0; i < tipo.length; i++) {
-//		for (int j = 0; j <tipo[i].length; j++) {
-//		if(tipo[i][j]) {
-//			mapa.getGrilla()[this.getYGrilla()][this.getXGrilla()]=tipo[i][j];
-//			}else if(this.getXGrilla()>0 && this.getXGrilla()<mapa.getGrilla()[i].length) {
-//				System.out.println("hola");
-//				mapa.getGrilla()[this.getYGrilla()][this.getXGrilla()+a]=tipo[i][j];
-//			}
-//		}
-//	}
-//}
 

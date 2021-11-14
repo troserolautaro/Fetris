@@ -18,14 +18,10 @@ public class Juego implements JuegoEventListener{
 	private float tiempoMov;
 	private float intervaloCaida= 0.6f;
 	private Pieza p;
-	private boolean prueba;
-//	private final int alto = 20, ancho = 10;
-//	private final int[][] area = new int[alto][ancho];
 	public Juego(boolean mapa) {
 		Utiles.listeners.add(this);
 		Gdx.input.setInputProcessor(io);
 		this.mapa = new Mapa(mapa);
-		prueba=mapa;
 		nueva=true;
 	}
 	public void update(OrthographicCamera cam, float delta) {
@@ -41,7 +37,7 @@ public class Juego implements JuegoEventListener{
 	}
 	public void nuevaPieza() {
 		int ind = Utiles.r.nextInt(Colores.values().length-1);
-		p = new Pieza(Colores.values()[ind].getDir(), 12,mapa.getSpr().getX()+ mapa.getSpr().getWidth()/2 , mapa.getSpr().getY()+mapa.getSpr().getHeight() - 24,19,5);
+		p = new Pieza(Colores.values()[ind].getDir(), 12,mapa.getSpr().getX()+ mapa.getSpr().getWidth()/2 , mapa.getSpr().getY()+mapa.getSpr().getHeight() - 24,19,4);
 	}
 	public Mapa getMapa() {
 		return mapa;
@@ -68,26 +64,24 @@ public class Juego implements JuegoEventListener{
 	
 	public boolean verifCaida(Cuadrado[] t) { //Verificar colisiones en Y de las piezas
 		boolean moverse =true;
+		float posYAux;
 		int i=0;
 		
 		do { //Verificar si esta colisionando con el mapa
 			Cuadrado c=t[i];
-		float posYAux=c.getSpr().getY();
+		posYAux=c.getSpr().getY();
 		posYAux -=c.getMovimiento();
 		if(posYAux <= mapa.getSpr().getY() ) {
 				moverse=false;
-		}else {
-				if(mapa.getCuadrados().size()>0){
+		}else if(mapa.getCuadrados().size()>0){
 					if(colisionCuadrado(c,c.getSpr().getX(),posYAux)) { //Si devuelve falso no colisiona, por ende puede moverse
 						moverse=false;
 					}
 				
 			}
-		}
+		
 		i++;
 		}while(i<t.length && moverse);
-		
-		
 		if(!moverse) {//Si colisiona y no puede moverse en el eje vertical, guardar el sprite y generar una nueva pieza
 			for (int j = 0; j < p.getTetromino().length; j++) {
 				mapa.getCuadrados().add(p.getTetromino()[j]);
@@ -105,7 +99,6 @@ public class Juego implements JuegoEventListener{
 public boolean verifMov(Cuadrado[] t, int dir) { //Verificar colisiones en X de las piezas
 	boolean mov = true;
 	int i=0;
-	
 	do {
 		Cuadrado c=t[i];
 	float posXAux=c.getSpr().getX();
@@ -113,17 +106,17 @@ public boolean verifMov(Cuadrado[] t, int dir) { //Verificar colisiones en X de 
 	if(dir>0) {
 		if(posXAux >=  mapa.getSpr().getX()+ mapa.getSpr().getWidth()- c.getTamaño()) {
 			mov=false;
-		}else {
+			p.setFilaX(9);
+		}else 
 			if(mapa.getCuadrados().size()>0) {
 				if(colisionCuadrado(c,posXAux,c.getSpr().getY())){
 					mov=false;
 				}
 			}
-		}
 	}else {
-		
 		if(posXAux < mapa.getSpr().getX() + c.getTamaño()) {
 			mov=false;
+			p.setFilaX(0);
 		}else {
 			if(mapa.getCuadrados().size()>0) {
 				if(colisionCuadrado(c,posXAux,c.getSpr().getY())){
@@ -144,9 +137,7 @@ public void moverPieza(int dir) {
 		for (int i = 0; i <	t.length; i++) {
 			float pos=t[i].getSpr().getX()+dir*t[i].getTamaño();
 			t[i].getSpr().setX(pos);
-//			System.out.println(pos);
 		}
-//		System.out.println("-------------------");
 	}
 	p.setFilaX(p.getFilaX()+dir);
 }
@@ -191,6 +182,62 @@ public void keyDown(int keycode) {
 		
 	}
 }
+private boolean colisionRotacion(boolean[][] nuevaPieza) {
+		boolean girar=true;
+		int xtmp=p.getFilaX();
+		int ytmp=p.getFilaY();
+		int i=0;
+		do {	
+			int j=0;
+				do {
+				if(nuevaPieza[i][j]) {
+					int filaXAux = p.getFilaX()+j;
+					int filaYAux = p.getFilaY()-i;
+
+					if(filaXAux<0) {
+						xtmp+=1;
+						}else if(filaXAux>mapa.getGrilla()[0].length-1) {
+						xtmp-=1;
+						}
+					if(filaYAux<0) {
+						ytmp+=1;
+					}
+				
+				}
+				j++;
+			}while(j<nuevaPieza[i].length && girar);
+		
+			i++;
+		}while(i<nuevaPieza.length && girar);
+//		do {
+//			int j=0;
+//			do {
+//				if(nuevaPieza[i][j]) {
+//					int filaXAux = p.getFilaX()+j;
+//					int filaYAux = p.getFilaY()-i;
+//					xtmp = colRotMapaX(filaXAux,xtmp);
+//					ytmp = colRotMapaY(filaYAux,ytmp);
+//					if(mapa.getCuadrados().size()>0) {
+//						if(mapa.getGrilla()[ytmp-i][xtmp+j]) {
+//							girar= false;
+//						}
+//					}
+//				}
+//				j++;
+//			}while(j< nuevaPieza[i].length && girar);
+//			i++;
+//		}while(i< nuevaPieza.length && girar);
+//		if(girar) {
+			p.setFilaX(xtmp);
+			p.setFilaY(ytmp);	
+//		}
+		return girar;
+		}
+
+		
+		
+
+
 private void girarPieza() { //Odio este codigo
 	boolean[][] new_piece = new boolean[p.getTipo().length][p.getTipo()[0].length];
 	for(int i = 0; i < p.getTipo().length; i++){
@@ -198,7 +245,10 @@ private void girarPieza() { //Odio este codigo
 			new_piece[j][ p.getTipo().length - 1 - i ] = p.getTipo()[i][j]; //i=0 j=1
 		}
 	}
-	p= new Pieza(p.getText(), p.getTamaño(), p.getX(), p.getY(),p.getFilaY(),p.getFilaX(), new_piece, mapa.getSpr().getX(), mapa.getSpr().getY());
+	if(colisionRotacion(new_piece)) {
+		p= new Pieza(p.getText(), p.getTamaño(), p.getX(), p.getY(),p.getFilaY(),p.getFilaX(), new_piece, mapa.getSpr().getX()+ p.getTamaño(), mapa.getSpr().getY()+p.getTamaño());
+	}
+	
 	}
 	
 
@@ -241,6 +291,7 @@ public void verifLineaCompl() {
 	}
 	}
 
+
 @Override
 public void enviarLineas(int lineas) {
 	for (int i = 0; i < Utiles.listeners.size(); i++) {
@@ -251,6 +302,7 @@ public void enviarLineas(int lineas) {
 	
 	
 }
+
 @Override
 public void recibirLineas(int lineas) {
 		int bloqueBorrado = Utiles.r.nextInt(mapa.getGrilla()[0].length );
@@ -263,7 +315,7 @@ public void recibirLineas(int lineas) {
 private void añadirLinea(int y, int bloqueBorrado) {
 	for (int i = 0; i < mapa.getGrilla()[y].length; i++) {
 		if(i!=bloqueBorrado) {
-			mapa.getCuadrados().add((new Cuadrado(Colores.GRIS.getDir(), 12, i*12 + mapa.getSpr().getX()+12 , y + mapa.getSpr().getY() +12 )));
+			mapa.getCuadrados().add((new Cuadrado(Colores.AMARILLO.getDir(), 12, i*12 + mapa.getSpr().getX()+12 , y + mapa.getSpr().getY() +12 )));
 		}
 		
 	}
