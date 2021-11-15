@@ -138,8 +138,9 @@ public void moverPieza(int dir) {
 			float pos=t[i].getSpr().getX()+dir*t[i].getTamaño();
 			t[i].getSpr().setX(pos);
 		}
+		p.setFilaX(p.getFilaX()+dir);
 	}
-	p.setFilaX(p.getFilaX()+dir);
+	
 }
 public boolean colisionCuadrado(Cuadrado c, float posAuxX, float posAuxY) {
 	boolean colision = false;
@@ -193,7 +194,6 @@ private boolean colisionRotacion(boolean[][] nuevaPieza) {
 				if(nuevaPieza[i][j]) {
 					int filaXAux = p.getFilaX()+j;
 					int filaYAux = p.getFilaY()-i;
-
 					if(filaXAux<0) {
 						xtmp+=1;
 						}else if(filaXAux>mapa.getGrilla()[0].length-1) {
@@ -202,35 +202,22 @@ private boolean colisionRotacion(boolean[][] nuevaPieza) {
 					if(filaYAux<0) {
 						ytmp+=1;
 					}
-				
+					if(mapa.getCuadrados().size()>0) {
+						if(mapa.getGrilla()[ytmp-i][xtmp+j]) {
+							girar=false;
+						}
+					}
 				}
 				j++;
-			}while(j<nuevaPieza[i].length && girar);
+			}while(j<nuevaPieza[i].length);
 		
 			i++;
-		}while(i<nuevaPieza.length && girar);
-//		do {
-//			int j=0;
-//			do {
-//				if(nuevaPieza[i][j]) {
-//					int filaXAux = p.getFilaX()+j;
-//					int filaYAux = p.getFilaY()-i;
-//					xtmp = colRotMapaX(filaXAux,xtmp);
-//					ytmp = colRotMapaY(filaYAux,ytmp);
-//					if(mapa.getCuadrados().size()>0) {
-//						if(mapa.getGrilla()[ytmp-i][xtmp+j]) {
-//							girar= false;
-//						}
-//					}
-//				}
-//				j++;
-//			}while(j< nuevaPieza[i].length && girar);
-//			i++;
-//		}while(i< nuevaPieza.length && girar);
-//		if(girar) {
+		}while(i<nuevaPieza.length);
+
+		if(girar) {
 			p.setFilaX(xtmp);
 			p.setFilaY(ytmp);	
-//		}
+		}
 		return girar;
 		}
 
