@@ -6,7 +6,6 @@ import com.proyecto.utiles.Mundo;
 
 public class Cuadrado {
 	private  int tamaño;
-	private Texture  text;
 	private Sprite spr;
 	private  int movimiento;
 //	private boolean activo;
@@ -14,12 +13,11 @@ public class Cuadrado {
 //		return activo;
 //	}
 
-	public Cuadrado(String text,int tamaño, float x, float y) {
+	public Cuadrado(Texture text,int tamaño, float x, float y) {
 //		this.activo=activo;
 		this.tamaño=tamaño;
 		this.movimiento=tamaño;
-		this.text=new Texture(text);
-		this.spr=new Sprite(this.text);
+		this.spr=new Sprite(text);
 		this.spr.setBounds(x,y,this.tamaño,this.tamaño);
 	}
 

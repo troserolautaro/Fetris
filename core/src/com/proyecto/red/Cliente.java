@@ -1,12 +1,8 @@
  package com.proyecto.red;
 
-import java.util.ArrayList;
-
-import com.proyecto.juego.Juego;
-
 public class Cliente {
 
-	private ArrayList<Juego> clientes = new ArrayList<Juego>();
+//	private ArrayList<Juego> clientes = new ArrayList<Juego>();
 	private HiloCliente hc;
 	private int id;
 	
@@ -19,9 +15,9 @@ public class Cliente {
 		return this.hc;
 	}
 	
-	public ArrayList<Juego> getClientes(){
-		return this.clientes;
-	}
+//	public ArrayList<Juego> getClientes(){
+//		return this.clientes;
+//	}
 	
 	public int getId() {
 		return this.id;
@@ -29,6 +25,5 @@ public class Cliente {
 	
 	public void setId(int id) {
 		this.id = id;
-		System.out.println("Se seteo id");
 	}
 }

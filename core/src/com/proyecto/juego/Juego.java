@@ -3,42 +3,35 @@ package com.proyecto.juego;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.proyecto.evento.KeyListener;
 import com.proyecto.mapas.Mapa;
 import com.proyecto.piezas.Colores;
 import com.proyecto.piezas.Cuadrado;
 import com.proyecto.piezas.Pieza;
+import com.proyecto.utiles.Assets;
 import com.proyecto.utiles.Mundo;
 import com.proyecto.utiles.Utiles;
 
 public class Juego implements JuegoEventListener{
 	private Mapa mapa;
-	private boolean nueva;
 	public KeyListener io = new KeyListener();
-	private float tiempoMov;
-	private float intervaloCaida= 0.6f;
 	private Pieza p;
 	public Juego(boolean mapa) {
 		Utiles.listeners.add(this);
 		Gdx.input.setInputProcessor(io);
 		this.mapa = new Mapa(mapa);
-		nueva=true;
 	}
 	public void update(OrthographicCamera cam, float delta) {
-		if(nueva) {
-			nuevaPieza();
-			nueva=!nueva;
-		}
 		Mundo.batch.setProjectionMatrix(cam.combined);
 		cam.update();
-		updatePieza();
 	
 
 	}
-	public void nuevaPieza() {
-		int ind = Utiles.r.nextInt(Colores.values().length-1);
-		p = new Pieza(Colores.values()[ind].getDir(), 12,mapa.getSpr().getX()+ mapa.getSpr().getWidth()/2 , mapa.getSpr().getY()+mapa.getSpr().getHeight() - 24,19,4);
+	public void nuevaPieza(int text,int pieza) {
+		p= new Pieza(Assets.manager.get(Colores.values()[text].getDir(), Texture.class) ,12,mapa.getSpr().getWidth()/2, mapa.getSpr().getHeight() - 24,20,4, pieza, mapa.getSpr().getX(), mapa.getSpr().getY());
 	}
+	
 	public Mapa getMapa() {
 		return mapa;
 	}
@@ -46,21 +39,15 @@ public class Juego implements JuegoEventListener{
 	public void render() {
 		Mundo.batch.begin();
 		mapa.render();
-		p.render();	
+		if(p!=null) {
+			p.render();		
+		}
 		Mundo.batch.end();
 	}
 
 	public void dispose() {
 	
 	}
-	public void updatePieza() {
-		tiempoMov+=Gdx.graphics.getDeltaTime();
-		if(tiempoMov>intervaloCaida) {
-			bajarPieza();
-			tiempoMov=0;
-			}
-			
-		}
 	
 	public boolean verifCaida(Cuadrado[] t) { //Verificar colisiones en Y de las piezas
 		boolean moverse =true;
@@ -89,7 +76,6 @@ public class Juego implements JuegoEventListener{
 			}
 			mapa.ordBurbCuadrados();
 			verifLineaCompl();
-			nueva=true;
 		}
 		
 		return moverse;
@@ -160,22 +146,27 @@ public void bajarPieza() {
 		for (int i = 0; i < p.getTetromino().length; i++) {
 			float pos=p.getTetromino()[i].getSpr().getY()- p.getTetromino()[i].getMovimiento();
 			p.getTetromino()[i].getSpr().setY(pos);
-		}
+		}	
 	p.setFilaY(p.getFilaY()-1);
+
 	}
 }
 @Override
 public void keyDown(int keycode) {
 	if(io.isUp()) {
+		Mundo.app.getCliente().getHc().enviarMensaje("girar"+ "!" + Mundo.app.getCliente().getId());
 		girarPieza();
 	}
 	if(io.isDown()) {
+		Mundo.app.getCliente().getHc().enviarMensaje("bajar"+ "!" + Mundo.app.getCliente().getId());
 		bajarPieza();
 	}
 	if(io.isRight()) {
+		Mundo.app.getCliente().getHc().enviarMensaje("mover"+ "!" + Mundo.app.getCliente().getId());
 		moverPieza(1);
 	}
 	if(io.isLeft()) {
+		Mundo.app.getCliente().getHc().enviarMensaje("mover"+ "!" + Mundo.app.getCliente().getId());
 		moverPieza(-1);
 	}
 	if(io.isSpace()) {
@@ -225,7 +216,7 @@ private boolean colisionRotacion(boolean[][] nuevaPieza) {
 		
 
 
-private void girarPieza() { //Odio este codigo
+public void girarPieza() { //Odio este codigo
 	boolean[][] new_piece = new boolean[p.getTipo().length][p.getTipo()[0].length];
 	for(int i = 0; i < p.getTipo().length; i++){
 		for(int j = 0; j < p.getTipo()[i].length; j++){
@@ -233,7 +224,7 @@ private void girarPieza() { //Odio este codigo
 		}
 	}
 	if(colisionRotacion(new_piece)) {
-		p= new Pieza(p.getText(), p.getTamaño(), p.getX(), p.getY(),p.getFilaY(),p.getFilaX(), new_piece, mapa.getSpr().getX()+ p.getTamaño(), mapa.getSpr().getY()+p.getTamaño());
+		p.girarTetromino(new_piece, mapa.getSpr().getX()+ p.getTamaño(), mapa.getSpr().getY()+p.getTamaño()); 
 	}
 	
 	}
@@ -302,7 +293,7 @@ public void recibirLineas(int lineas) {
 private void añadirLinea(int y, int bloqueBorrado) {
 	for (int i = 0; i < mapa.getGrilla()[y].length; i++) {
 		if(i!=bloqueBorrado) {
-			mapa.getCuadrados().add((new Cuadrado(Colores.AMARILLO.getDir(), 12, i*12 + mapa.getSpr().getX()+12 , y + mapa.getSpr().getY() +12 )));
+			mapa.getCuadrados().add((new Cuadrado(Assets.manager.get(Colores.AMARILLO.getDir(),Texture.class), 12, i*12 + mapa.getSpr().getX()+12 , y + mapa.getSpr().getY() +12 )));
 		}
 		
 	}
@@ -310,6 +301,7 @@ private void añadirLinea(int y, int bloqueBorrado) {
 		mapa.agregarAGrilla(mapa.getCuadrados().get(i));
 	}
 }
+
 }
 
 	

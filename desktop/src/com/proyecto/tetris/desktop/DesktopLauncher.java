@@ -2,7 +2,7 @@ package com.proyecto.tetris.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.proyecto.tetris.Tetris;
+import com.proyecto.tetris.Fetris;
 import com.proyecto.utiles.Config;
 
 public class DesktopLauncher {
@@ -11,6 +11,6 @@ public class DesktopLauncher {
 		config.height = Config.ALTO;
 		config.width = Config.ANCHO;
 		config.title = Config.NOMBRE;
-		new LwjglApplication(new Tetris(), config);
+		new LwjglApplication(new Fetris(), config);
 	}
 }

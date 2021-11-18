@@ -7,28 +7,31 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-public class HiloCliente extends Thread{
+import com.proyecto.pantallas.ScreenJuego;
+import com.proyecto.utiles.Mundo;
+import com.proyecto.utiles.Utiles;
 
+public class HiloCliente extends Thread{
 	private DatagramSocket socket;
 	private InetAddress ipServer;
-	private int puerto = 6767;
+	private int puerto = 6969;
 	private boolean fin = false;
 	
 	public HiloCliente() {
 			try {
-				ipServer = InetAddress.getByName("26.33.181.120");
+				ipServer = InetAddress.getByName("255.255.255.255");
 				socket = new DatagramSocket();
 			} catch (SocketException | UnknownHostException e) {
 				e.printStackTrace();
 			}
-			enviarMensaje("Conexion!");
+		
+			enviarMensaje("Conexion");
 
 	}
 
 	public void enviarMensaje(String msg) {
 		byte[] data = msg.getBytes();
 		DatagramPacket dp = new DatagramPacket(data, data.length, ipServer, puerto);
-		
 		try {
 			socket.send(dp);
 		} catch (IOException e) {
@@ -43,11 +46,12 @@ public class HiloCliente extends Thread{
 			DatagramPacket dp = new DatagramPacket(data, data.length);
 			try {
 				socket.receive(dp);
+	
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
-			procesarMensaje(dp);			
+			procesarMensaje(dp);
+					
 		}while(!fin);
 	}
 	
@@ -55,12 +59,54 @@ public class HiloCliente extends Thread{
 		String msg = (new String(dp.getData())).trim();
 		
 		String[] comando = msg.split("!");
-		
-		if(comando.length > 1) {
+			if(comando[0].equals("OK")) {
+				ipServer = dp.getAddress();
+				Mundo.app.getCliente().setId(Integer.valueOf(comando[1]));
+			}
+			if(comando[0].equals("Empieza")) {
+				Mundo.app.setCambio(true);
+			}
 			
+			if(comando[0].equals("crearPieza")) {
+				ScreenJuego sj = null;
+				try {
+					sj = (ScreenJuego) Mundo.app.getScreen();
+					
+				} catch (Exception e) {
+					System.out.println("error");
+				}
+				if(Integer.valueOf(comando[3])==(Mundo.app.getCliente().getId())) {
+					sj.getJuego().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
+				}else {
+					sj.getJuego2().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
+				}
+				
+			}
+			if(comando[0].equals("bajar")) {
+				ScreenJuego sj = null;
+				try {
+					sj = (ScreenJuego) Mundo.app.getScreen();
+				} catch (Exception e) {
+					System.out.println("error");
+				}
+				if(Integer.valueOf(comando[1])==Mundo.app.getCliente().getId()) {
+					sj.getJuego().bajarPieza();
+				}else {
+					sj.getJuego2().bajarPieza();
+				}
+			}
+			if(comando[0].equals("girar")) {
+				ScreenJuego sj = null;
+				try {
+					sj = (ScreenJuego) Mundo.app.getScreen();
+				} catch (Exception e) {
+					System.out.println("error");
+				}
+				sj.getJuego2().girarPieza();
+			}
 		
 		
-		}
+		
 	
 	}
 }

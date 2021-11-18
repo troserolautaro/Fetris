@@ -8,35 +8,43 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.proyecto.juego.Juego;
 import com.proyecto.utiles.Config;
+import com.proyecto.utiles.Mundo;
 
 public class ScreenJuego implements Screen {
  private Juego juego;
  private Juego juego2;
  private OrthographicCamera cam;
  private Stage stage;
+ private boolean empieza=false;
 	@Override
 	public void show() {
 		stage= new Stage();
 		iniciarCam();
 		juego2= new Juego(false);
 		juego= new Juego(true);
+		Mundo.app.getCliente().getHc().enviarMensaje("creado");
 	}
 
 	public Juego getJuego() {
 		return juego;
 	}
+	public Juego getJuego2() {
+		return juego2;
+	}
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		stage.draw();
-		juego.update(cam, delta);
-		juego2.update(cam, delta);
-		juego.render();
-		juego2.render();
-//		debug();
-		cam.update();
+		
+			Gdx.gl.glClearColor(0, 0, 0, 0);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			stage.draw();
+			juego.update(cam, delta);
+			juego2.update(cam, delta);
+			juego.render();
+			juego2.render();
+//			debug();			
+		
+		
 	}
 	
 //	private void debug() {
@@ -68,7 +76,7 @@ public class ScreenJuego implements Screen {
 //			cam.zoom+=1/Utiles.PPM;
 //			
 //		}
-	
+//		cam.update();
 //	}
 
 	@Override
@@ -79,7 +87,7 @@ public class ScreenJuego implements Screen {
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
+
 		
 	}
 
