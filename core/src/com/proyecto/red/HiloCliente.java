@@ -59,6 +59,13 @@ public class HiloCliente extends Thread{
 		String msg = (new String(dp.getData())).trim();
 		
 		String[] comando = msg.split("!");
+		ScreenJuego sj = null;
+		int cliente = comando.length-1;
+		try {
+			sj = (ScreenJuego) Mundo.app.getScreen();
+		} catch (Exception e) {
+			System.out.println("error");
+		}
 			if(comando[0].equals("OK")) {
 				ipServer = dp.getAddress();
 				Mundo.app.getCliente().setId(Integer.valueOf(comando[1]));
@@ -68,14 +75,7 @@ public class HiloCliente extends Thread{
 			}
 			
 			if(comando[0].equals("crearPieza")) {
-				ScreenJuego sj = null;
-				try {
-					sj = (ScreenJuego) Mundo.app.getScreen();
-					
-				} catch (Exception e) {
-					System.out.println("error");
-				}
-				if(Integer.valueOf(comando[3])==(Mundo.app.getCliente().getId())) {
+				if(Integer.valueOf(comando[cliente])==(Mundo.app.getCliente().getId())) {
 					sj.getJuego().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
 				}else {
 					sj.getJuego2().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
@@ -83,30 +83,57 @@ public class HiloCliente extends Thread{
 				
 			}
 			if(comando[0].equals("bajar")) {
-				ScreenJuego sj = null;
-				try {
-					sj = (ScreenJuego) Mundo.app.getScreen();
-				} catch (Exception e) {
-					System.out.println("error");
-				}
-				if(Integer.valueOf(comando[1])==Mundo.app.getCliente().getId()) {
+				if(Integer.valueOf(comando[cliente])==Mundo.app.getCliente().getId()) {
 					sj.getJuego().bajarPieza();
 				}else {
 					sj.getJuego2().bajarPieza();
 				}
 			}
 			if(comando[0].equals("girar")) {
-				ScreenJuego sj = null;
-				try {
-					sj = (ScreenJuego) Mundo.app.getScreen();
-				} catch (Exception e) {
-					System.out.println("error");
+				if(Integer.valueOf(comando[cliente])==Mundo.app.getCliente().getId()) {
+					sj.getJuego().girarPieza();
+				}else {
+					sj.getJuego2().girarPieza();
 				}
-				sj.getJuego2().girarPieza();
+				
 			}
-		
-		
-		
-	
-	}
+			if(comando[0].equals("mover")) {
+				if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
+					sj.getJuego().moverPieza(Integer.valueOf(comando[1]));	 
+				}else {
+					sj.getJuego2().moverPieza(Integer.valueOf(comando[1]));	 
+				}
+
+			}
+			if(comando[0].equals("guardar")) {
+				if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
+					sj.getJuego().guardar();	 
+				}else {
+					sj.getJuego2().guardar();	 
+				}
+			}
+			if(comando[0].equals("borrar")) {
+				if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
+					sj.getJuego().borrarLinea(Integer.valueOf(comando[1]));	 
+				}else {
+					sj.getJuego2().borrarLinea(Integer.valueOf(comando[1]));	 	 
+				}
+				
+			}
+			if(comando[0].equals("bajarlinea")) {
+				if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
+					sj.getJuego().bajarCuadrados(Integer.valueOf(comando[1]));
+				}else {
+					sj.getJuego2().bajarCuadrados(Integer.valueOf(comando[1]));
+				}
+			}
+			if(comando[0].equals("enviar")) {
+				if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
+					sj.getJuego().recibirLineas(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
+				}else {
+					sj.getJuego2().recibirLineas(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
+				}
+			}
+			
+		}
 }
