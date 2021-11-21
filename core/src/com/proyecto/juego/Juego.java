@@ -19,6 +19,8 @@ public class Juego implements JuegoEventListener{
 	private Mapa mapa;
 	public KeyListener io = new KeyListener();
 	private Pieza p;
+	private float tiempoMov;
+	private float intervaloCaida= 0.6f;
 	public Juego(boolean mapa) {
 		Utiles.listeners.add(this);
 		Gdx.input.setInputProcessor(io);
@@ -27,8 +29,7 @@ public class Juego implements JuegoEventListener{
 	public void update(OrthographicCamera cam, float delta) {
 		Mundo.batch.setProjectionMatrix(cam.combined);
 		cam.update();
-	
-
+		
 	}
 	public void nuevaPieza(int text,int pieza) {
 		p= new Pieza(Assets.manager.get(Colores.values()[text].getDir(), Texture.class) ,12,mapa.getSpr().getWidth()/2, mapa.getSpr().getHeight() - 24,20,4, pieza, mapa.getSpr().getX(), mapa.getSpr().getY());
@@ -46,20 +47,24 @@ public class Juego implements JuegoEventListener{
 		}
 		Mundo.batch.end();
 	}
-
+	
+	
 	public void dispose() {
 	
 	}
 	
 
-	public void moverPieza(int dir) {
+	public void moverPiezaL(int dir) {
 		Cuadrado[] t = 	p.getTetromino();
 			for (int i = 0; i <	t.length; i++) {
 				float pos=t[i].getSpr().getX()+dir*t[i].getTamaño();
 				t[i].getSpr().setX(pos);
 			}
 			p.setFilaX(p.getFilaX()+dir);
-		
+	}
+	
+	public void moverPieza(int filaX) {
+		p.mover(filaX, p.getFilaY(),mapa.getSpr().getX()+ p.getTamaño() ,mapa.getSpr().getY()+p.getTamaño());
 	}
 	
 	public void bajarPieza() {
@@ -67,36 +72,45 @@ public class Juego implements JuegoEventListener{
 				float pos=p.getTetromino()[i].getSpr().getY()- p.getTetromino()[i].getMovimiento();
 				p.getTetromino()[i].getSpr().setY(pos);
 			}	
-		p.setFilaY(p.getFilaY()-1);
+			p.setFilaY(p.getFilaY()-1);
+		}
+	
+	public void bajarPieza(int filaY) {
+			p.mover(p.getFilaX(), filaY,mapa.getSpr().getX()+ p.getTamaño() ,mapa.getSpr().getY()+p.getTamaño());
 		}
 	
 	@Override
 	public void keyDown(int keycode) {
 		if(io.isUp()) {
-	//		Mundo.app.getCliente().getHc().enviarMensaje("girar"+ "!" + Mundo.app.getCliente().getId());
+			Mundo.app.getCliente().getHc().enviarMensaje("girar"+ "!" + Mundo.app.getCliente().getId());
+			
 		}
 		if(io.isDown()) {
 			Mundo.app.getCliente().getHc().enviarMensaje("bajar"+ "!" + Mundo.app.getCliente().getId());
+			
 		}
 		if(io.isRight()) {
 			Mundo.app.getCliente().getHc().enviarMensaje("mover"+ "!" + 1 + "!" + Mundo.app.getCliente().getId());
+			
 		}
 		if(io.isLeft()) {
 			Mundo.app.getCliente().getHc().enviarMensaje("mover"+ "!" + -1 + "!" + Mundo.app.getCliente().getId());
+			
 		}
 		if(io.isSpace()) {
 			//Verificar cual de los sprites es el mas alto en todos los X del mismo sprite, y luego ajustar el sprite que esta en el mismo X y ajustar los otros Sprites.
 			
 		}
 	}
-	public void girarPieza() { //Odio este codigo
+	public void girarPieza(int filaX, int filaY) { //Odio este codigo
 		boolean[][] new_piece = new boolean[p.getTipo().length][p.getTipo()[0].length];
 		for(int i = 0; i < p.getTipo().length; i++){
 			for(int j = 0; j < p.getTipo()[i].length; j++){
 				new_piece[j][ p.getTipo().length - 1 - i ] = p.getTipo()[i][j]; //i=0 j=1
 			}
 		}
-		
+			p.setFilaX(filaX);
+			p.setFilaY(filaY);
 			p.girarTetromino(new_piece, mapa.getSpr().getX()+ p.getTamaño(), mapa.getSpr().getY()+p.getTamaño()); 
 		
 		
@@ -163,7 +177,7 @@ public class Juego implements JuegoEventListener{
 			do {
 				if(tmpBorrar.get(i)==mapa.getCuadrados().get(j)) {
 					mapa.getCuadrados().remove(mapa.getCuadrados().get(j));
-					bandera=false;
+					bandera=true;
 				}
 				j++;
 			}while(j<mapa.getCuadrados().size() && !bandera);

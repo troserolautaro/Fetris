@@ -101,7 +101,10 @@ public class Pieza {
 				int k=0;
 				do {
 					if(tipoTmp[j][k]) {
-						tetromino[i]=(new Cuadrado(this.text, this.tamaño, (filaX+k)*this.tamaño+ correcionX, (filaY-j)*this.tamaño+correcionY));
+//						tetromino[i]=(new Cuadrado(this.text, this.tamaño, (filaX+k)*this.tamaño+ correcionX, (filaY-j)*this.tamaño+correcionY));
+						tetromino[i].getSpr().setX((filaX+k) * this.tamaño+ correcionX);
+						tetromino[i].getSpr().setY((filaY-j)*this.tamaño+correcionY);
+					
 						tipoTmp[j][k]=false;
 						bandera=true;
 					}
@@ -150,6 +153,30 @@ public class Pieza {
 		for (int i = 0; i <this.tetromino.length; i++) {
 			this.tetromino[i].getSpr().draw(Mundo.batch);
 		}
+	}
+	public void mover(int filaX, int filaY, float correcionX, float correcionY) {
+		asignarPieza(tipo);
+		for (int i = 0; i <tetromino.length; i++) {
+			int j=0;
+			boolean bandera=false;
+			do {
+				int k=0;
+				do {
+					if(tipoTmp[j][k]) {
+//						tetromino[i]=(new Cuadrado(this.text, this.tamaño, (filaX+k)*this.tamaño+ correcionX, (filaY-j)*this.tamaño+correcionY));
+						tetromino[i].getSpr().setX((filaX+k) * this.tamaño+ correcionX);
+						tetromino[i].getSpr().setY((filaY-j)*this.tamaño+correcionY);
+						
+						tipoTmp[j][k]=false;
+						bandera=true;
+					}
+					k++;
+				}while(k<tipoTmp[j].length && !bandera);
+				j++;
+			}while(j<tipoTmp.length && !bandera);
+		}
+		this.filaX=filaX;
+		this.filaY=filaY;
 	}
 //	public int posAlta() {
 //		int max=0;

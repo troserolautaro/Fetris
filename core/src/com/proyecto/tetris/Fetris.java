@@ -2,6 +2,7 @@ package com.proyecto.tetris;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.proyecto.pantallas.ScreenFin;
 import com.proyecto.pantallas.ScreenJuego;
 import com.proyecto.pantallas.ScreenLobby;
 import com.proyecto.red.Cliente;
@@ -13,6 +14,7 @@ public class Fetris extends Game{
 	private boolean cambio;
 	private ScreenJuego sj;
 	private ScreenLobby sl;
+	private ScreenFin sf;
 	@Override
 	public void create () {
 		Assets.load();
