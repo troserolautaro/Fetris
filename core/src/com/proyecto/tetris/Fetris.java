@@ -11,10 +11,13 @@ import com.proyecto.utiles.Mundo;
 
 public class Fetris extends Game{
 	private Cliente cliente;
-	private boolean cambio;
+	private boolean cambio=false;
 	private ScreenJuego sj;
 	private ScreenLobby sl;
 	private ScreenFin sf;
+	private boolean fin=false;
+	private boolean lobby = false;
+	private boolean gano;
 	@Override
 	public void create () {
 		Assets.load();
@@ -33,19 +36,49 @@ public class Fetris extends Game{
 		if(cambio) {
 			cambiar();
 		}
+		if(fin) {
+			fin();
+		}
+		if(lobby) {
+			lobby();
+		}
 	}
 	
 	@Override
 	public void dispose () {
-		Mundo.batch.dispose();
+		
 	}
 	
-	public void cambiar() {
+	private void cambiar() {
 		screen.dispose();
 		this.setScreen(sj = new ScreenJuego());
 		cambio=!cambio;
+		super.render();
 	}
-	
+	public void setLobby(boolean lobby) {
+		this.lobby = lobby;
+	}
+
+	private void fin() {
+		screen.dispose();
+		this.setScreen(sf = new ScreenFin(gano));
+		fin=!fin;
+		super.render();
+	}
+	private void lobby() {
+		screen.dispose();
+		this.setScreen(sl= new ScreenLobby());
+		lobby=!lobby;
+		super.render();
+	}
+	public void setFin(boolean fin) {
+		this.fin = fin;
+	}
+
+	public void setGano(boolean gano) {
+		this.gano = gano;
+	}
+
 	public void setCambio(boolean cambio) {
 		this.cambio = cambio;
 	}

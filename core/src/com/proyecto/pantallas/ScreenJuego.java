@@ -14,11 +14,9 @@ public class ScreenJuego implements Screen {
  private Juego juego;
  private Juego juego2;
  private OrthographicCamera cam;
- private Stage stage;
  private boolean empieza=false;
 	@Override
 	public void show() {
-		stage= new Stage();
 		iniciarCam();
 		juego2= new Juego(false);
 		juego= new Juego(true);
@@ -34,50 +32,22 @@ public class ScreenJuego implements Screen {
 
 	@Override
 	public void render(float delta) {
-		
 			Gdx.gl.glClearColor(0, 0, 0, 0);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-			stage.draw();
-			juego.update(cam, delta);
-			juego2.update(cam, delta);
+			update(delta);
 			juego.render();
 			juego2.render();
 //			debug();			
 		
 		
 	}
+	public void update(float delta) {
+		Mundo.batch.setProjectionMatrix(cam.combined);
+		cam.update();
+		
+	}
 	
-//	private void debug() {
-//		if(Gdx.input.justTouched()) {
-//	           System.out.println(cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0))); 
-//		}
-//	}
-//		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-//			
-//			cam.position.y+=1;
-//		}
-//		if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-//			
-//			cam.position.y-=1;
-//		}
-//		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-//			cam.position.x-=1;
-//			
-//		}
-//		if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-//			cam.position.x+=1;
-//			
-//		}
-//		if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
-//			cam.zoom-=1/Utiles.PPM;
-//			
-//		}
-//		if(Gdx.input.isKeyPressed(Input.Keys.E)) {
-//			cam.zoom+=1/Utiles.PPM;
-//			
-//		}
-//		cam.update();
-//	}
+
 
 	@Override
 	public void resize(int width, int height) {
@@ -105,14 +75,15 @@ public class ScreenJuego implements Screen {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		
 	}
 	private  void iniciarCam() {
 			cam= new OrthographicCamera();
 			cam.setToOrtho(false, Config.ANCHO/ 2, Config.ALTO / 2);
 			cam.zoom=1f;
-		cam.update();
+			cam.update();
 	}
+
+	
 
 }

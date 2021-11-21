@@ -163,7 +163,6 @@ public class Pieza {
 				int k=0;
 				do {
 					if(tipoTmp[j][k]) {
-//						tetromino[i]=(new Cuadrado(this.text, this.tamaño, (filaX+k)*this.tamaño+ correcionX, (filaY-j)*this.tamaño+correcionY));
 						tetromino[i].getSpr().setX((filaX+k) * this.tamaño+ correcionX);
 						tetromino[i].getSpr().setY((filaY-j)*this.tamaño+correcionY);
 						

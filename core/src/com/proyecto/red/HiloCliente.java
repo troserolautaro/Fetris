@@ -76,13 +76,14 @@ public class HiloCliente extends Thread{
 			if(comando[0].equals("Empieza")) {
 				Mundo.app.setCambio(true);
 			}
-			if(comando[0].equals("termino")) {
+			if(comando[0].equals("termino")) {	
 				if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
-					Mundo.app.getScreen().dispose();
-					Mundo.app.setScreen(new ScreenFin(false));
+					Mundo.app.setGano(false);
 				}else {
-					Mundo.app.setScreen(new ScreenFin(true));
+					
+					Mundo.app.setGano(true);
 				}
+				Mundo.app.setFin(true);
 			}
 			
 			if(sj!=null) {
@@ -97,9 +98,9 @@ public class HiloCliente extends Thread{
 				
 				if(comando[0].equals("bajar")) {
 					if(Integer.valueOf(comando[cliente])==Mundo.app.getCliente().getId()) {
-						sj.getJuego().bajarPieza(Integer.valueOf(comando[1]));
+						sj.getJuego().bajarPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
 					}else {
-						sj.getJuego2().bajarPieza(Integer.valueOf(comando[1]));
+						sj.getJuego2().bajarPieza(Integer.valueOf(comando[1]),Integer.valueOf(comando[2]));
 					}
 				}
 				
@@ -120,11 +121,13 @@ public class HiloCliente extends Thread{
 
 				}
 				if(comando[0].equals("guardar")) {
+					sj.getJuego().setMov(false);
 					if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
-						sj.getJuego().guardar();	 
+						sj.getJuego().guardar(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));	 
 					}else {
-						sj.getJuego2().guardar();	 
+						sj.getJuego2().guardar(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));	 
 					}
+					sj.getJuego().setMov(true);
 				}
 				if(comando[0].equals("borrar")) {
 					if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {

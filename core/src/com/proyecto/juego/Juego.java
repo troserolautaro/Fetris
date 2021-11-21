@@ -19,20 +19,26 @@ public class Juego implements JuegoEventListener{
 	private Mapa mapa;
 	public KeyListener io = new KeyListener();
 	private Pieza p;
-	private float tiempoMov;
-	private float intervaloCaida= 0.6f;
+//	private float tiempoMov;
+//	private float intervaloCaida= 0.6f;
+	private float correcionX;
+	private float correcionY;
+	private boolean mov = true;
 	public Juego(boolean mapa) {
 		Utiles.listeners.add(this);
 		Gdx.input.setInputProcessor(io);
 		this.mapa = new Mapa(mapa);
-	}
-	public void update(OrthographicCamera cam, float delta) {
-		Mundo.batch.setProjectionMatrix(cam.combined);
-		cam.update();
 		
 	}
+	
+	private void iniciarCorrecion() {
+		correcionY= mapa.getSpr().getY()+p.getTamaño();
+		correcionX=  mapa.getSpr().getX()+ p.getTamaño();
+	}
+
 	public void nuevaPieza(int text,int pieza) {
 		p= new Pieza(Assets.manager.get(Colores.values()[text].getDir(), Texture.class) ,12,mapa.getSpr().getWidth()/2, mapa.getSpr().getHeight() - 24,20,4, pieza, mapa.getSpr().getX(), mapa.getSpr().getY());
+		iniciarCorrecion();
 	}
 	
 	public Mapa getMapa() {
@@ -56,50 +62,101 @@ public class Juego implements JuegoEventListener{
 
 	public void moverPiezaL(int dir) {
 		Cuadrado[] t = 	p.getTetromino();
+		if(verifMov(t, dir)) {
 			for (int i = 0; i <	t.length; i++) {
 				float pos=t[i].getSpr().getX()+dir*t[i].getTamaño();
 				t[i].getSpr().setX(pos);
 			}
 			p.setFilaX(p.getFilaX()+dir);
+		}
+			
 	}
 	
+	private boolean verifMov(Cuadrado[] t,int dir) {
+		int i=0;
+		boolean mov=true;
+		do {
+			Cuadrado c=t[i];
+		float posXAux=c.getSpr().getX();
+		posXAux +=dir * c.getMovimiento();
+		if(dir>0) {
+			if(posXAux >=  mapa.getSpr().getX()+ mapa.getSpr().getWidth()- c.getTamaño()) {
+				mov=false;
+			}
+		}else {
+			if(posXAux < mapa.getSpr().getX() + c.getTamaño()) {
+				mov=false;
+			}
+		}
+		i++;
+		}while(i<t.length && mov);
+		return mov;
+	}
+	
+	
+	public boolean verifCaida(Cuadrado[] t) { //Verificar colisiones en Y de las piezas
+		boolean moverse =true;
+		float posYAux;
+		int i=0;
+		do { //Verificar si esta colisionando con el mapa
+			Cuadrado c=t[i];
+		posYAux=c.getSpr().getY();
+		posYAux -=c.getMovimiento();
+		if(posYAux <= mapa.getSpr().getY() ) {
+				moverse=false;
+		}
+		i++;
+		}while(i<t.length && moverse);
+		return moverse;
+	}
+	
+	
+	
 	public void moverPieza(int filaX) {
-		p.mover(filaX, p.getFilaY(),mapa.getSpr().getX()+ p.getTamaño() ,mapa.getSpr().getY()+p.getTamaño());
+		p.mover(filaX, p.getFilaY(),correcionX ,correcionY);
 	}
 	
 	public void bajarPieza() {
-		for (int i = 0; i < p.getTetromino().length; i++) {
+		if(verifCaida(p.getTetromino())) {
+			for (int i = 0; i < p.getTetromino().length; i++) {
 				float pos=p.getTetromino()[i].getSpr().getY()- p.getTetromino()[i].getMovimiento();
 				p.getTetromino()[i].getSpr().setY(pos);
 			}	
 			p.setFilaY(p.getFilaY()-1);
 		}
+		}
+		
 	
-	public void bajarPieza(int filaY) {
-			p.mover(p.getFilaX(), filaY,mapa.getSpr().getX()+ p.getTamaño() ,mapa.getSpr().getY()+p.getTamaño());
+	public void bajarPieza(int filaY, int filaX) {
+			p.mover(filaX, filaY,correcionX ,correcionY);
 		}
 	
 	@Override
 	public void keyDown(int keycode) {
-		if(io.isUp()) {
-			Mundo.app.getCliente().getHc().enviarMensaje("girar"+ "!" + Mundo.app.getCliente().getId());
-			
-		}
-		if(io.isDown()) {
-			Mundo.app.getCliente().getHc().enviarMensaje("bajar"+ "!" + Mundo.app.getCliente().getId());
-			
-		}
-		if(io.isRight()) {
-			Mundo.app.getCliente().getHc().enviarMensaje("mover"+ "!" + 1 + "!" + Mundo.app.getCliente().getId());
-			
-		}
-		if(io.isLeft()) {
-			Mundo.app.getCliente().getHc().enviarMensaje("mover"+ "!" + -1 + "!" + Mundo.app.getCliente().getId());
-			
-		}
-		if(io.isSpace()) {
-			//Verificar cual de los sprites es el mas alto en todos los X del mismo sprite, y luego ajustar el sprite que esta en el mismo X y ajustar los otros Sprites.
-			
+		if(mov) {
+			if(io.isUp()) {
+				Mundo.app.getCliente().getHc().enviarMensaje("girar"+ "!" + Mundo.app.getCliente().getId());
+				
+			}
+			if(io.isDown()) {
+				bajarPieza();
+				Mundo.app.getCliente().getHc().enviarMensaje("bajar"+ "!" + Mundo.app.getCliente().getId());
+				
+			}
+			if(io.isRight()) {
+				moverPiezaL(1);
+				Mundo.app.getCliente().getHc().enviarMensaje("mover"+ "!" + 1 + "!" + Mundo.app.getCliente().getId());
+				
+			}
+			if(io.isLeft()) {
+				moverPiezaL(-1);
+				Mundo.app.getCliente().getHc().enviarMensaje("mover"+ "!" + -1 + "!" + Mundo.app.getCliente().getId());
+				
+			}
+			if(io.isSpace()) {
+				//Verificar cual de los sprites es el mas alto en todos los X del mismo sprite, y luego ajustar el sprite que esta en el mismo X y ajustar los otros Sprites.
+				
+			}
 		}
 	}
 	public void girarPieza(int filaX, int filaY) { //Odio este codigo
@@ -111,7 +168,7 @@ public class Juego implements JuegoEventListener{
 		}
 			p.setFilaX(filaX);
 			p.setFilaY(filaY);
-			p.girarTetromino(new_piece, mapa.getSpr().getX()+ p.getTamaño(), mapa.getSpr().getY()+p.getTamaño()); 
+			p.girarTetromino(new_piece,correcionX,correcionY ); 
 		
 		
 		}
@@ -157,12 +214,17 @@ public class Juego implements JuegoEventListener{
 	}
 	
 	
-	public void guardar() {
+	public void guardar(int filaX, int filaY) {
+		p.mover(filaX, filaY, correcionX, correcionY);
 		for (int j = 0; j < p.getTetromino().length; j++) {
 			mapa.getCuadrados().add(p.getTetromino()[j]);
 		}
+		
 	}
-	
+	public void setMov(boolean mov) {
+		this.mov = mov;
+		
+	}
 	
 	public void borrarLinea(int y) {
 		ArrayList<Cuadrado> tmpBorrar = new ArrayList <Cuadrado>();

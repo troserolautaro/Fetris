@@ -5,6 +5,10 @@ import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector3;
 import com.proyecto.juego.JuegoEventListener;
 import com.proyecto.mapas.Mapa;
 import com.proyecto.pantallas.ScreenJuego;
@@ -84,6 +88,36 @@ public static Mapa obtenerMapa() {
 	
 		
 	}
+public static  void debug(OrthographicCamera cam) {
+if(Gdx.input.justTouched()) {
+       System.out.println(cam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0))); 
+}
 
+if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+	
+	cam.position.y+=1;
+}
+if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+	
+	cam.position.y-=1;
+}
+if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+	cam.position.x-=1;
+	
+}
+if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+	cam.position.x+=1;
+	
+}
+if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
+	cam.zoom-=1/Utiles.PPM;
+	
+}
+if(Gdx.input.isKeyPressed(Input.Keys.E)) {
+	cam.zoom+=1/Utiles.PPM;
+	
+}
+cam.update();
+}
 	
 }
