@@ -127,7 +127,7 @@ public class HiloCliente extends Thread{
 					}else {
 						sj.getJuego2().guardar(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));	 
 					}
-					sj.getJuego().setMov(true);
+					
 				}
 				if(comando[0].equals("borrar")) {
 					if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {

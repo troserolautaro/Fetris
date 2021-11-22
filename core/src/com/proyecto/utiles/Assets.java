@@ -13,6 +13,8 @@ public class Assets {
 		}
 		manager.load("Tetriminos/Title/Ganaste.png", Texture.class);
 		manager.load("Tetriminos/Title/Perdiste.png", Texture.class);
+		manager.load("Tetriminos/Title/Esperar.png",Texture.class);
+		manager.load("Tetriminos/Title/Continuar.png",Texture.class);
 	}
 	 
 }

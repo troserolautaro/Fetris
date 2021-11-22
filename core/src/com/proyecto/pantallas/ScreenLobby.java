@@ -7,17 +7,21 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.proyecto.utiles.Assets;
 import com.proyecto.utiles.Config;
 import com.proyecto.utiles.Mundo;
 
 public class ScreenLobby implements Screen {
 	 private OrthographicCamera cam;
 	 private Sprite spr;
+	 private Sprite txt;
 	@Override
 	public void show() {
 		iniciarCam();
 		spr= new Sprite(new Texture("Tetriminos\\Title\\Title_No_BG.png"));
 		spr.setBounds(Config.ANCHO/2-250, Config.ALTO/2f+100,500, 100);
+		txt = new Sprite(Assets.manager.get("Tetriminos/Title/Esperar.png", Texture.class));
+		txt.setBounds(Config.ANCHO/2-150, Config.ALTO/2f-150,300, 50);
 	}
 
 	@Override
@@ -28,6 +32,7 @@ public class ScreenLobby implements Screen {
 		
 		Mundo.batch.begin();
 		spr.draw(Mundo.batch);
+		txt.draw(Mundo.batch);
 		Mundo.batch.end();
 	}
 

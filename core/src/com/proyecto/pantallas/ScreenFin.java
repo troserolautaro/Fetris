@@ -28,8 +28,8 @@ public class ScreenFin implements Screen {
 	@Override
 	public void show() {
 		iniciarCam();
-//		txt = new Sprite(Assets.manager.get("Tetriminos/Title/Continuar", Texture.class));
-//		txt.setBounds(Config.ANCHO/2-150, Config.ALTO/2f-150,300, 50);
+		txt = new Sprite(Assets.manager.get("Tetriminos/Title/Continuar.png", Texture.class));
+		txt.setBounds(Config.ANCHO/2-150, Config.ALTO/2f-150,300, 50);
 		spr.setBounds(Config.ANCHO/2-250, Config.ALTO/2f+100,500, 100);
 	}
 
@@ -41,6 +41,7 @@ public class ScreenFin implements Screen {
 		
 		Mundo.batch.begin();
 		spr.draw(Mundo.batch);
+		txt.draw(Mundo.batch);
 		Mundo.batch.end(); 
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.ENTER)) {

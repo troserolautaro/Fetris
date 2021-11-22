@@ -219,6 +219,7 @@ public class Juego implements JuegoEventListener{
 		for (int j = 0; j < p.getTetromino().length; j++) {
 			mapa.getCuadrados().add(p.getTetromino()[j]);
 		}
+		mov=true;
 		
 	}
 	public void setMov(boolean mov) {
