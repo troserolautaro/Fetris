@@ -7,7 +7,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import com.proyecto.pantallas.ScreenFin;
 import com.proyecto.pantallas.ScreenJuego;
 import com.proyecto.utiles.Mundo;
 
@@ -87,11 +86,18 @@ public class HiloCliente extends Thread{
 			}
 			
 			if(sj!=null) {
+				if(comando[0].equals("crearSigPieza")) {
+					if(Integer.valueOf(comando[cliente])==(Mundo.app.getCliente().getId())) {
+						sj.getJuego().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]),-24);
+					}else {
+						sj.getJuego2().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]),+24);
+					}
+				}
 				if(comando[0].equals("crearPieza")) {
 					if(Integer.valueOf(comando[cliente])==(Mundo.app.getCliente().getId())) {
-						sj.getJuego().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
+						sj.getJuego().sigPieza();
 					}else {
-						sj.getJuego2().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
+						sj.getJuego2().sigPieza();
 					}
 					
 				}
@@ -121,11 +127,12 @@ public class HiloCliente extends Thread{
 
 				}
 				if(comando[0].equals("guardar")) {
-					sj.getJuego().setMov(false);
 					if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
-						sj.getJuego().guardar(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));	 
+						sj.getJuego().setMov(false);
+						sj.getJuego().guardarMapa(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));	 
+						sj.getJuego().setMov(true);
 					}else {
-						sj.getJuego2().guardar(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));	 
+						sj.getJuego2().guardarMapa(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));	 
 					}
 					
 				}
@@ -151,6 +158,7 @@ public class HiloCliente extends Thread{
 						sj.getJuego2().recibirLineas(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
 					}
 				}
+			
 			}
 			
 			

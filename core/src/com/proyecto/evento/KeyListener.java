@@ -6,7 +6,7 @@ import com.proyecto.utiles.Utiles;
 
 public class KeyListener implements InputProcessor {
 	
-	private boolean up = false, down = false, right = false, left = false, space=false;
+	private boolean c =false, up = false, down = false, right = false, left = false, space=false;
 
 	@Override
 	public boolean keyDown(int keycode) {
@@ -15,6 +15,7 @@ public class KeyListener implements InputProcessor {
 		if(keycode==Keys.LEFT) left = true;
 		if(keycode==Keys.RIGHT) right = true;	
 		if(keycode==Keys.SPACE) space = true;
+		if(keycode==Keys.C) c = true;
 		for (int i = 0; i < Utiles.listeners.size(); i++) {
 			Utiles.listeners.get(i).keyDown(keycode);
 		}
@@ -29,6 +30,7 @@ public class KeyListener implements InputProcessor {
 		if(keycode==Keys.LEFT) left = false;
 		if(keycode==Keys.RIGHT) right = false;	
 		if(keycode==Keys.SPACE) space = false;
+		if(keycode==Keys.C) c = false;
 		for (int i = 0; i < Utiles.listeners.size(); i++) {
 			Utiles.listeners.get(i).keyUp(keycode);
 		}
@@ -82,6 +84,9 @@ public class KeyListener implements InputProcessor {
 	}
 	public boolean isSpace() {
 		return space;
+	}
+	public boolean isC() {
+		return c;
 	}
 	
 	

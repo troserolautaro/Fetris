@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.proyecto.juego.Juego;
 import com.proyecto.utiles.Config;
 import com.proyecto.utiles.Mundo;
@@ -14,7 +12,6 @@ public class ScreenJuego implements Screen {
  private Juego juego;
  private Juego juego2;
  private OrthographicCamera cam;
- private boolean empieza=false;
 	@Override
 	public void show() {
 		iniciarCam();

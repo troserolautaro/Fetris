@@ -4,7 +4,6 @@ package com.proyecto.juego;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.proyecto.evento.KeyListener;
 import com.proyecto.mapas.Mapa;
@@ -12,18 +11,22 @@ import com.proyecto.piezas.Colores;
 import com.proyecto.piezas.Cuadrado;
 import com.proyecto.piezas.Pieza;
 import com.proyecto.utiles.Assets;
+import com.proyecto.utiles.Config;
 import com.proyecto.utiles.Mundo;
 import com.proyecto.utiles.Utiles;
 
 public class Juego implements JuegoEventListener{
 	private Mapa mapa;
 	public KeyListener io = new KeyListener();
-	private Pieza p;
+	private Pieza pieza;
+	private Pieza sigP;
+	private Pieza piezaGuardada;
 //	private float tiempoMov;
 //	private float intervaloCaida= 0.6f;
 	private float correcionX;
 	private float correcionY;
 	private boolean mov = true;
+	private boolean cambiar=true;
 	public Juego(boolean mapa) {
 		Utiles.listeners.add(this);
 		Gdx.input.setInputProcessor(io);
@@ -32,14 +35,26 @@ public class Juego implements JuegoEventListener{
 	}
 	
 	private void iniciarCorrecion() {
-		correcionY= mapa.getSpr().getY()+p.getTamaño();
-		correcionX=  mapa.getSpr().getX()+ p.getTamaño();
+		correcionY= mapa.getSpr().getY()+pieza.getTamaño();
+		correcionX=  mapa.getSpr().getX()+ pieza.getTamaño();
 	}
 
-	public void nuevaPieza(int text,int pieza) {
-		p= new Pieza(Assets.manager.get(Colores.values()[text].getDir(), Texture.class) ,12,mapa.getSpr().getWidth()/2, mapa.getSpr().getHeight() - 24,20,4, pieza, mapa.getSpr().getX(), mapa.getSpr().getY());
+	public void nuevaPieza(int text, int pieza, int corX) {
+		sigP = new Pieza(Assets.manager.get(Colores.values()[text].getDir(),Texture.class), 12,Config.ANCHO/4+corX , Config.ALTO/4 + 12 ,19,4,pieza,0,0);
+	}
+	public void sigPieza() {
+		pieza = new Pieza(sigP.getText(),sigP.getTamaño(), 
+						mapa.getSpr().getWidth()/2,
+						mapa.getSpr().getHeight() - 24,
+						sigP.getFilaY(),
+						sigP.getFilaX(),
+						sigP.getPieza(),
+						mapa.getSpr().getX(),
+						mapa.getSpr().getY());
 		iniciarCorrecion();
 	}
+	
+	
 	
 	public Mapa getMapa() {
 		return mapa;
@@ -48,8 +63,12 @@ public class Juego implements JuegoEventListener{
 	public void render() {
 		Mundo.batch.begin();
 		mapa.render();
-		if(p!=null) {
-			p.render();		
+		if(pieza!=null) {
+			pieza.render();	
+			sigP.render();
+			if(piezaGuardada!=null) {
+				piezaGuardada.render();
+			}
 		}
 		Mundo.batch.end();
 	}
@@ -61,13 +80,13 @@ public class Juego implements JuegoEventListener{
 	
 
 	public void moverPiezaL(int dir) {
-		Cuadrado[] t = 	p.getTetromino();
+		Cuadrado[] t = 	pieza.getTetromino();
 		if(verifMov(t, dir)) {
 			for (int i = 0; i <	t.length; i++) {
 				float pos=t[i].getSpr().getX()+dir*t[i].getTamaño();
 				t[i].getSpr().setX(pos);
 			}
-			p.setFilaX(p.getFilaX()+dir);
+			pieza.setFilaX(pieza.getFilaX()+dir);
 		}
 			
 	}
@@ -113,22 +132,22 @@ public class Juego implements JuegoEventListener{
 	
 	
 	public void moverPieza(int filaX) {
-		p.mover(filaX, p.getFilaY(),correcionX ,correcionY);
+		pieza.mover(filaX, pieza.getFilaY(),correcionX ,correcionY);
 	}
 	
 	public void bajarPieza() {
-		if(verifCaida(p.getTetromino())) {
-			for (int i = 0; i < p.getTetromino().length; i++) {
-				float pos=p.getTetromino()[i].getSpr().getY()- p.getTetromino()[i].getMovimiento();
-				p.getTetromino()[i].getSpr().setY(pos);
+		if(verifCaida(pieza.getTetromino())) {
+			for (int i = 0; i < pieza.getTetromino().length; i++) {
+				float pos=pieza.getTetromino()[i].getSpr().getY()- pieza.getTetromino()[i].getMovimiento();
+				pieza.getTetromino()[i].getSpr().setY(pos);
 			}	
-			p.setFilaY(p.getFilaY()-1);
+			pieza.setFilaY(pieza.getFilaY()-1);
 		}
 		}
 		
 	
 	public void bajarPieza(int filaY, int filaX) {
-			p.mover(filaX, filaY,correcionX ,correcionY);
+			pieza.mover(filaX, filaY,correcionX ,correcionY);
 		}
 	
 	@Override
@@ -157,18 +176,74 @@ public class Juego implements JuegoEventListener{
 				//Verificar cual de los sprites es el mas alto en todos los X del mismo sprite, y luego ajustar el sprite que esta en el mismo X y ajustar los otros Sprites.
 				
 			}
-		}
-	}
-	public void girarPieza(int filaX, int filaY) { //Odio este codigo
-		boolean[][] new_piece = new boolean[p.getTipo().length][p.getTipo()[0].length];
-		for(int i = 0; i < p.getTipo().length; i++){
-			for(int j = 0; j < p.getTipo()[i].length; j++){
-				new_piece[j][ p.getTipo().length - 1 - i ] = p.getTipo()[i][j]; //i=0 j=1
+			if(io.isC()) {
+				if(cambiar) {
+					guardarPieza();
+					Mundo.app.getCliente().getHc().enviarMensaje("guardarPieza"+"!"+ Mundo.app.getCliente().getId());
+					cambiar=!cambiar;
+				}
+				
 			}
 		}
-			p.setFilaX(filaX);
-			p.setFilaY(filaY);
-			p.girarTetromino(new_piece,correcionX,correcionY ); 
+	}
+	private void guardarPieza() {
+		if(piezaGuardada== null) {
+			piezaGuardada = new Pieza(pieza.getText(),
+					pieza.getTamaño(),
+					mapa.getSpr().getX()-24,
+					mapa.getSpr().getY()+mapa.getSpr().getHeight()-32,
+					19,
+					4,
+					pieza.getPieza(),
+					0,
+					0);
+		
+		}else {
+			Pieza auxP = new Pieza(
+					pieza.getText(), 
+					pieza.getTamaño(),
+					mapa.getSpr().getX()-24,
+					mapa.getSpr().getY()+mapa.getSpr().getHeight()-32,
+					19,
+					4,
+					pieza.getPieza(),
+					0,0);
+			
+			pieza= new Pieza(
+					piezaGuardada.getText(),
+					piezaGuardada.getTamaño(),
+					pieza.getX(),
+					pieza.getY() ,
+					19,
+					4,
+					piezaGuardada.getPieza(),
+					mapa.getSpr().getX(),
+					mapa.getSpr().getY());
+			
+			piezaGuardada = new Pieza(
+					auxP.getText(),
+					auxP.getTamaño(),
+					auxP.getX(),
+					auxP.getY() ,
+					auxP.getFilaY(),
+					auxP.getFilaX(),
+					auxP.getPieza(),
+					0,0);
+			
+		}
+		
+	}
+
+	public void girarPieza(int filaX, int filaY) { //Odio este codigo
+		boolean[][] new_piece = new boolean[pieza.getTipo().length][pieza.getTipo()[0].length];
+		for(int i = 0; i < pieza.getTipo().length; i++){
+			for(int j = 0; j < pieza.getTipo()[i].length; j++){
+				new_piece[j][ pieza.getTipo().length - 1 - i ] = pieza.getTipo()[i][j]; //i=0 j=1
+			}
+		}
+			pieza.setFilaX(filaX);
+			pieza.setFilaY(filaY);
+			pieza.girarTetromino(new_piece,correcionX,correcionY ); 
 		
 		
 		}
@@ -214,12 +289,13 @@ public class Juego implements JuegoEventListener{
 	}
 	
 	
-	public void guardar(int filaX, int filaY) {
-		p.mover(filaX, filaY, correcionX, correcionY);
-		for (int j = 0; j < p.getTetromino().length; j++) {
-			mapa.getCuadrados().add(p.getTetromino()[j]);
+	public void guardarMapa(int filaX, int filaY) {
+		pieza.mover(filaX, filaY, correcionX, correcionY);
+		for (int j = 0; j < pieza.getTetromino().length; j++) {
+			mapa.getCuadrados().add(pieza.getTetromino()[j]);
 		}
-		mov=true;
+		
+		cambiar=true;
 		
 	}
 	public void setMov(boolean mov) {

@@ -12,6 +12,13 @@ public class Pieza {
 	private float x,y;
 	private int filaX;
 	private int filaY;
+	private int pieza;
+	public int getPieza() {
+		return pieza;
+	}
+
+	
+
 	public Cuadrado[] getTetromino() {
 		return tetromino;
 	}
@@ -48,11 +55,12 @@ public class Pieza {
 		this.y=y;
 		this.filaX=filaX;
 		this.filaY=filaY;
-		crearTetromino(pieza,correcionX,correcionY);
+		this.pieza= pieza;
+		crearTetromino(correcionX,correcionY);
 	}
 	
-	public void crearTetromino(int pieza,float correcionX, float correcionY) {
-		buscarPieza(pieza);
+	public void crearTetromino(float correcionX, float correcionY) {
+		buscarPieza();
 		for (int i = 0; i <tetromino.length; i++) {
 			int j=0;
 			boolean bandera=false;
@@ -122,7 +130,7 @@ public class Pieza {
 		this.filaX = filaX;
 	}
 	
-	private void buscarPieza(int pieza) {
+	private void buscarPieza() {
 		boolean[][] tmp = Piezas.values()[pieza].getPieza();
 		tipoTmp = new boolean [tmp.length][tmp[0].length];
 		tipo = new boolean [tmp.length][tmp[0].length];
