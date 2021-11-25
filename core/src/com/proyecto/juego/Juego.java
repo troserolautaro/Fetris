@@ -25,6 +25,8 @@ public class Juego implements JuegoEventListener{
 	private float correcionY;
 	private boolean mov = true;
 	private boolean cambiar=true;
+	
+	
 	public Juego(boolean mapa) {
 		Utiles.listeners.add(this);
 		Gdx.input.setInputProcessor(io);
@@ -33,22 +35,21 @@ public class Juego implements JuegoEventListener{
 	}
 	
 	private void iniciarCorrecion() {
-		correcionY= mapa.getSpr().getY()+pieza.getTamaño();
+		correcionY= mapa.getSpr().getY()+ pieza.getTamaño();
 		correcionX=  mapa.getSpr().getX()+ pieza.getTamaño();
 	}
 
-	public void nuevaPieza(int text, int pieza, int corX) {
-		sigP = new Pieza(Assets.manager.get(Colores.values()[text].getDir(),Texture.class), 12,Config.ANCHO/4+corX , Config.ALTO/4 + 12 ,19,4,pieza,0,0);
+	public void nuevaPieza(int text, int pieza, int corX, int filaX, int filaY, int tamaño) {
+		sigP = new Pieza(Assets.manager.get(Colores.values()[text].getDir(),Texture.class), tamaño,Config.ANCHO/4+corX , Config.ALTO/4 + tamaño ,filaY,filaX,pieza);
 	}
-	public void sigPieza() {
-		pieza = new Pieza(sigP.getText(),sigP.getTamaño(), 
-						mapa.getSpr().getWidth()/2,
-						mapa.getSpr().getHeight() - 24,
-						sigP.getFilaY(),
-						sigP.getFilaX(),
-						sigP.getPieza(),
-						mapa.getSpr().getX(),
-						mapa.getSpr().getY());
+	public void sigPieza(int filaX, int filaY) {
+		pieza = new Pieza(sigP.getText(),
+						sigP.getTamaño(), 
+						mapa.getSpr().getWidth()/2 + mapa.getSpr().getX(),
+						mapa.getSpr().getHeight() + mapa.getSpr().getY()+sigP.getTamaño()*3,
+						filaY,
+						filaX,
+						sigP.getPieza());
 		iniciarCorrecion();
 	}
 	
@@ -176,7 +177,6 @@ public class Juego implements JuegoEventListener{
 			}
 			if(io.isC()) {
 				if(cambiar) {
-					guardarPieza();
 					Mundo.app.getCliente().getHc().enviarMensaje("guardarPieza"+"!"+ Mundo.app.getCliente().getId());
 					cambiar=!cambiar;
 				}
@@ -184,17 +184,15 @@ public class Juego implements JuegoEventListener{
 			}
 		}
 	}
-	private void guardarPieza() {
+	public void guardarPieza(int filaY, int filaX) {
 		if(piezaGuardada== null) {
 			piezaGuardada = new Pieza(pieza.getText(),
 					pieza.getTamaño(),
 					mapa.getSpr().getX()-24,
 					mapa.getSpr().getY()+mapa.getSpr().getHeight()-32,
-					19,
-					4,
-					pieza.getPieza(),
-					0,
-					0);
+					filaY,
+					filaX,
+					pieza.getPieza());
 		
 		}else {
 			Pieza auxP = new Pieza(
@@ -202,21 +200,18 @@ public class Juego implements JuegoEventListener{
 					pieza.getTamaño(),
 					mapa.getSpr().getX()-24,
 					mapa.getSpr().getY()+mapa.getSpr().getHeight()-32,
-					19,
-					4,
-					pieza.getPieza(),
-					0,0);
+					filaY,
+					filaX,
+					pieza.getPieza());
 			
 			pieza= new Pieza(
 					piezaGuardada.getText(),
 					piezaGuardada.getTamaño(),
-					pieza.getX(),
-					pieza.getY() ,
-					19,
-					4,
-					piezaGuardada.getPieza(),
-					mapa.getSpr().getX(),
-					mapa.getSpr().getY());
+					pieza.getX() + mapa.getSpr().getX(),
+					pieza.getY() + mapa.getSpr().getY() ,
+					filaY,
+					filaX,
+					piezaGuardada.getPieza());
 			
 			piezaGuardada = new Pieza(
 					auxP.getText(),
@@ -225,8 +220,7 @@ public class Juego implements JuegoEventListener{
 					auxP.getY() ,
 					auxP.getFilaY(),
 					auxP.getFilaX(),
-					auxP.getPieza(),
-					0,0);
+					auxP.getPieza());
 			
 		}
 		

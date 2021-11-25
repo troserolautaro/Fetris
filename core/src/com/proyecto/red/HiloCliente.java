@@ -79,6 +79,7 @@ public class HiloCliente extends Thread{
 			}
 			if(comando[0].equals("cerro")) {
 				Mundo.app.setServerError(true);
+				fin=true;
 			}
 			
 			if(comando[0].equals("termino")) {	
@@ -96,16 +97,26 @@ public class HiloCliente extends Thread{
 			if(sj!=null) {
 				if(comando[0].equals("crearSigPieza")) {
 					if(Integer.valueOf(comando[cliente])==(Mundo.app.getCliente().getId())) {
-						sj.getJuego().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]),-24);
+						sj.getJuego().nuevaPieza(Integer.valueOf(comando[1]), 
+												Integer.valueOf(comando[2]),
+												-24, 
+												Integer.valueOf(comando[3]), 
+												Integer.valueOf(comando[4]),
+												Integer.valueOf(comando[5]));
 					}else {
-						sj.getJuego2().nuevaPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]),+24);
+						sj.getJuego2().nuevaPieza(Integer.valueOf(comando[1]), 
+								Integer.valueOf(comando[2]),
+								+24, 
+								Integer.valueOf(comando[3]), 
+								Integer.valueOf(comando[4]),
+								Integer.valueOf(comando[5]));
 					}
 				}
 				if(comando[0].equals("crearPieza")) {
 					if(Integer.valueOf(comando[cliente])==(Mundo.app.getCliente().getId())) {
-						sj.getJuego().sigPieza();
+						sj.getJuego().sigPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
 					}else {
-						sj.getJuego2().sigPieza();
+						sj.getJuego2().sigPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
 					}
 					
 				}
@@ -164,6 +175,13 @@ public class HiloCliente extends Thread{
 						sj.getJuego().recibirLineas(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
 					}else {
 						sj.getJuego2().recibirLineas(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
+					}
+				}
+				if(comando[0].equals("guardarPieza")) {
+					if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
+						sj.getJuego().guardarPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
+					}else {
+						sj.getJuego2().guardarPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
 					}
 				}
 			

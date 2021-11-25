@@ -48,7 +48,7 @@ public class Pieza {
 		this.y = y;
 	}
 
-	public Pieza(Texture text, int tamaño, float x, float y,int filaY,int filaX, int pieza, float correcionX, float correcionY) {
+	public Pieza(Texture text, int tamaño, float x, float y,int filaY,int filaX, int pieza) {
 		this.text=text;
 		this.tamaño=tamaño;
 		this.x=x;
@@ -56,10 +56,10 @@ public class Pieza {
 		this.filaX=filaX;
 		this.filaY=filaY;
 		this.pieza= pieza;
-		crearTetromino(correcionX,correcionY);
+		crearTetromino();
 	}
 	
-	public void crearTetromino(float correcionX, float correcionY) {
+	public void crearTetromino() {
 		buscarPieza();
 		for (int i = 0; i <tetromino.length; i++) {
 			int j=0;
@@ -68,7 +68,7 @@ public class Pieza {
 				int k=0;
 				do {
 					if(tipoTmp[j][k]) {
-						tetromino[i]=(new Cuadrado(text, tamaño, x+((k-1)*tamaño)+ correcionX, y-(j*tamaño)+correcionY));
+						tetromino[i]=(new Cuadrado(text, tamaño, x+((k-1)*tamaño), y-(j*tamaño)));
 						tipoTmp[j][k]=false;
 						bandera=true;
 					}

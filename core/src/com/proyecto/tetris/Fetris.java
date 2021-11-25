@@ -54,10 +54,9 @@ public class Fetris extends Game{
 	
 	@Override
 	public void dispose () {
-		System.out.println("dispose");
-		if(this.screen==sj) {
-			cliente.getHc().enviarMensaje("cerro"+ "!" + cliente.getId());
-		}
+		cliente.getHc().enviarMensaje("cerro"+ "!" + cliente.getId());
+		
+		
 		this.screen.dispose();
 		Assets.manager.dispose();
 		

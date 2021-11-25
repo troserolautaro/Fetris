@@ -45,6 +45,7 @@ public class ScreenFin implements Screen {
 		Mundo.batch.end(); 
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
 			Mundo.app.getCliente().crearHilo();
+			Mundo.app.setServerError(true);
 		}
 		
 		Utiles.debug(cam);

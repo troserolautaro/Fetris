@@ -15,6 +15,7 @@ public class ScreenServerError implements Screen {
 	private Sprite spr;
 	private Sprite txt;
 	private OrthographicCamera cam;
+	float cd = 0;
 	public void show() {
 		iniciarCam();
 		spr = new Sprite(Assets.manager.get("Tetriminos/Title/ServerErrorMsg.png", Texture.class));
@@ -33,7 +34,8 @@ public class ScreenServerError implements Screen {
 		spr.draw(Mundo.batch);
 		txt.draw(Mundo.batch);
 		Mundo.batch.end(); 
-		if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+		cd +=delta;
+		if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && cd > 3) {
 			Mundo.app.getCliente().crearHilo();
 		}
 		
