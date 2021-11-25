@@ -23,7 +23,6 @@ public class HiloCliente extends Thread{
 			} catch (SocketException | UnknownHostException e) {
 				e.printStackTrace();
 			}
-		
 			enviarMensaje("Conexion");
 
 	}
@@ -68,20 +67,29 @@ public class HiloCliente extends Thread{
 			} catch (Exception e) {
 				System.out.println("error");
 			}
+			
 			if(comando[0].equals("OK")) {
 				ipServer = dp.getAddress();
 				Mundo.app.getCliente().setId(Integer.valueOf(comando[1]));
+				Mundo.app.setLobby(true);
 			}
+			
 			if(comando[0].equals("Empieza")) {
 				Mundo.app.setCambio(true);
 			}
+			if(comando[0].equals("cerro")) {
+				Mundo.app.setServerError(true);
+			}
+			
 			if(comando[0].equals("termino")) {	
 				if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
 					Mundo.app.setGano(false);
+					fin=true;
 				}else {
-					
 					Mundo.app.setGano(true);
+					fin=true;
 				}
+				
 				Mundo.app.setFin(true);
 			}
 			

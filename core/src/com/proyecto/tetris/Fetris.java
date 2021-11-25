@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.proyecto.pantallas.ScreenFin;
 import com.proyecto.pantallas.ScreenJuego;
 import com.proyecto.pantallas.ScreenLobby;
+import com.proyecto.pantallas.ScreenServerError;
 import com.proyecto.red.Cliente;
 import com.proyecto.utiles.Assets;
 import com.proyecto.utiles.Mundo;
@@ -15,9 +16,11 @@ public class Fetris extends Game{
 	private ScreenJuego sj;
 	private ScreenLobby sl;
 	private ScreenFin sf;
+	private ScreenServerError sSvE;
 	private boolean fin=false;
 	private boolean lobby = false;
 	private boolean gano;
+	private boolean serverError = false;
 	@Override
 	public void create () {
 		Assets.load();
@@ -27,25 +30,36 @@ public class Fetris extends Game{
 		Mundo.batch= new SpriteBatch();
 		cliente = new Cliente();
 		cliente.crearHilo();
-		this.setScreen(sl = new ScreenLobby());
+		this.setScreen(sSvE = new ScreenServerError());
+		
 	}
 
 	@Override
 	public void render () {
 		super.render();
+		if(serverError) {
+			serverError();
+		}
+		if(lobby) {
+			lobby();
+		}
 		if(cambio) {
 			cambiar();
 		}
 		if(fin) {
 			fin();
 		}
-		if(lobby) {
-			lobby();
-		}
+		
 	}
 	
 	@Override
 	public void dispose () {
+		System.out.println("dispose");
+		if(this.screen==sj) {
+			cliente.getHc().enviarMensaje("cerro"+ "!" + cliente.getId());
+		}
+		this.screen.dispose();
+		Assets.manager.dispose();
 		
 	}
 	
@@ -71,6 +85,12 @@ public class Fetris extends Game{
 		lobby=!lobby;
 		super.render();
 	}
+	private void serverError() {
+		screen.dispose();
+		this.setScreen(sSvE= new ScreenServerError());
+		serverError = !serverError;
+		super.render();
+	}
 	public void setFin(boolean fin) {
 		this.fin = fin;
 	}
@@ -87,5 +107,9 @@ public class Fetris extends Game{
 	}
 	public Cliente getCliente() {
 		return cliente;
+	}
+
+	public void setServerError(boolean serverError) {
+		this.serverError = serverError;
 	}
 }

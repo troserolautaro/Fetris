@@ -21,8 +21,6 @@ public class Juego implements JuegoEventListener{
 	private Pieza pieza;
 	private Pieza sigP;
 	private Pieza piezaGuardada;
-//	private float tiempoMov;
-//	private float intervaloCaida= 0.6f;
 	private float correcionX;
 	private float correcionY;
 	private boolean mov = true;
@@ -310,6 +308,7 @@ public class Juego implements JuegoEventListener{
 					tmpBorrar.add(mapa.getCuadrados().get(j));
 				}
 		}
+		
 		for (int i = 0; i < tmpBorrar.size(); i++) {
 			int j=0;
 			boolean bandera=false;
@@ -322,12 +321,13 @@ public class Juego implements JuegoEventListener{
 			}while(j<mapa.getCuadrados().size() && !bandera);
 		}
 		tmpBorrar.removeAll(tmpBorrar);	
+		
 	}
 	
 	
-	public void bajarCuadrados(int i) {
+	public void bajarCuadrados(int y) {
 		for (int j = 0; j < mapa.getCuadrados().size(); j++) {
-			if(mapa.getCuadrados().get(j).getYGrilla(mapa.getSpr().getY()) > i) {
+			if(mapa.getCuadrados().get(j).getYGrilla(mapa.getSpr().getY()) > y) {
 				mapa.getCuadrados().get(j).getSpr().setY(mapa.getCuadrados().get(j).getSpr().getY()-(mapa.getCuadrados().get(j).getMovimiento()));
 			}
 		}

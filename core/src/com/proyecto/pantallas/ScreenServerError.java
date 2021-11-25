@@ -10,27 +10,17 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.proyecto.utiles.Assets;
 import com.proyecto.utiles.Config;
 import com.proyecto.utiles.Mundo;
-import com.proyecto.utiles.Utiles;
 
-public class ScreenFin implements Screen {
+public class ScreenServerError implements Screen {
 	private Sprite spr;
 	private Sprite txt;
 	private OrthographicCamera cam;
-	public ScreenFin(boolean ganar) {
-		if(ganar) {
-			spr = new Sprite(Assets.manager.get("Tetriminos/Title/Ganaste.png", Texture.class));
-		}else {
-			spr = new Sprite(Assets.manager.get("Tetriminos/Title/Perdiste.png", Texture.class));
-		}
-		Mundo.app.getCliente().getHc().interrupt();
-//		System.out.println((ganar)? "Ganaste":"Perdiste");
-	}
-	@Override
 	public void show() {
 		iniciarCam();
-		txt = new Sprite(Assets.manager.get("Tetriminos/Title/Continuar.png", Texture.class));
-		txt.setBounds(Config.ANCHO/2-150, Config.ALTO/2f-150,300, 50);
+		spr = new Sprite(Assets.manager.get("Tetriminos/Title/ServerErrorMsg.png", Texture.class));
+		txt = new Sprite(Assets.manager.get("Tetriminos/Title/ServerErrorAccion.png", Texture.class)); 
 		spr.setBounds(Config.ANCHO/2-250, Config.ALTO/2f+100,500, 100);
+		txt.setBounds(Config.ANCHO/2-150, Config.ALTO/2f-150,300, 50);
 	}
 
 	@Override
@@ -47,7 +37,6 @@ public class ScreenFin implements Screen {
 			Mundo.app.getCliente().crearHilo();
 		}
 		
-		Utiles.debug(cam);
 	}
 
 	@Override
@@ -76,18 +65,20 @@ public class ScreenFin implements Screen {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		
 		
 	}
+
 	private  void iniciarCam() {
 		cam= new OrthographicCamera();
 		cam.setToOrtho(false, Config.ANCHO, Config.ALTO);
 		cam.zoom=1f;
 		cam.update();
-}
+	}
 	public void update(float delta) {
 		Mundo.batch.setProjectionMatrix(cam.combined);
 		cam.update();
 		
 	}
+
 }
