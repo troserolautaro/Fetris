@@ -184,6 +184,13 @@ public class HiloCliente extends Thread{
 						sj.getJuego2().guardarPieza(Integer.valueOf(comando[1]), Integer.valueOf(comando[2]));
 					}
 				}
+				if(comando[0].equals("bomba")) {
+					if(Mundo.app.getCliente().getId() ==Integer.valueOf(comando[cliente])) {
+						sj.getJuego().bomba(Integer.valueOf(comando[1]));
+					}else {
+						sj.getJuego2().bomba(Integer.valueOf(comando[1]));
+					}
+				}
 			
 			}
 			

@@ -25,8 +25,9 @@ public class Juego implements JuegoEventListener{
 	private float correcionY;
 	private boolean mov = true;
 	private boolean cambiar=true;
-	
-	
+	private boolean bomba = true;
+	private float tiempoBomba = 30;
+	private float cdBomba = 0;
 	public Juego(boolean mapa) {
 		Utiles.listeners.add(this);
 		Gdx.input.setInputProcessor(io);
@@ -59,7 +60,7 @@ public class Juego implements JuegoEventListener{
 		return mapa;
 	}
 
-	public void render() {
+	public void render(float delta) {
 		Mundo.batch.begin();
 		mapa.render();
 		if(pieza!=null) {
@@ -67,6 +68,13 @@ public class Juego implements JuegoEventListener{
 			sigP.render();
 			if(piezaGuardada!=null) {
 				piezaGuardada.render();
+			}
+		}
+		if(!bomba) {
+			cdBomba+=delta;
+			if(tiempoBomba<cdBomba) {
+				bomba=true;
+				cdBomba=0;
 			}
 		}
 		Mundo.batch.end();
@@ -182,8 +190,36 @@ public class Juego implements JuegoEventListener{
 				}
 				
 			}
+			if(io.isX()) {
+				if(bomba) {
+						Mundo.app.getCliente().getHc().enviarMensaje("bomba"+"!"+Mundo.app.getCliente().getId());
+						bomba=!bomba;
+					}
+			}
 		}
 	}
+	public void bomba(int y) {
+		ArrayList<Cuadrado> tmpBorrar = new ArrayList <Cuadrado>();
+		for (int j = 0; j < mapa.getCuadrados().size(); j++) {
+				if(y>mapa.getCuadrados().get(j).getYGrilla(mapa.getSpr().getY())) {
+					tmpBorrar.add(mapa.getCuadrados().get(j));
+				}
+		}
+		for (int i = 0; i < tmpBorrar.size(); i++) {
+			int j=0;
+			boolean bandera=false;
+			do {
+				if(tmpBorrar.get(i)==mapa.getCuadrados().get(j)) {
+					mapa.getCuadrados().remove(mapa.getCuadrados().get(j));
+					bandera=true;
+				}
+				j++;
+			}while(j<mapa.getCuadrados().size() && !bandera);
+		}
+		tmpBorrar.removeAll(tmpBorrar);	
+		
+	}
+
 	public void guardarPieza(int filaY, int filaX) {
 		if(piezaGuardada== null) {
 			piezaGuardada = new Pieza(pieza.getText(),
